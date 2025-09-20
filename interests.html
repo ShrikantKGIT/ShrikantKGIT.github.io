@@ -44,20 +44,30 @@
         <h2>Generative AI & Large Language Models</h2>
         <p>
             Experience with the H200 GPU cluster:
-
             <p style="line-height: 2;"> </p>
-            
             "190 PFLOPS H200 GPU"
             <br>
             Computational Throughput: 190 PFLOPS specifies a computational rate of 190 petaflops. A petaflop is a standard metric in high-performance computing (HPC) equivalent to 10^15 floating-point operations per second (FLOPS). This system can therefore execute 190 quadrillion such operations per second.
             <br>
             Processing Hardware: The H200 is a specific model of Graphics Processing Unit (GPU) manufactured by NVIDIA. It is based on the "Hopper" microarchitecture. A primary hardware feature is its 141 GB of HBM3e (High-Bandwidth Memory 3e), which provides an extremely high data transfer rate, a critical factor for performance in data-intensive workloads.
             <br>
-            System Architecture: The 190 PFLOPS denotes the aggregate peak performance of a 48 H200-GPU cards interconnected via high-speed fabric technologies like NVIDIA NVLink to function as a unified computational resource.
+            System Architecture: The 190 PFLOPS denotes the aggregate peak performance of a 48 H200-GPU cards interconnected via high-speed NVIDIA NVLink to function as a unified computational resource.
             <br>
             FP8 (8-bit Floating Point): ~4 PFLOPS (3,958 TFLOPS)
             <br>
             48 GPUs × 3.958 PFLOPS/GPU (FP8) = 190 PFLOPS
+            <p style="line-height: 2;"> </p>
+            NVIDIA NVLink
+            <br>
+            <br>
+            NVIDIA NVLink is a proprietary, chip-to-chip interconnect protocol that provides a high-density, low-latency physical layer for GPU-to-GPU and GPU-to-CPU communication. 
+            The generation used with Hopper H200 GPUs is NVLink 4.0, which utilizes 18 differential pairs per link, each operating at 50 Gbit/s to provide 25 GB/s of unidirectional bandwidth. 
+            With 18 links per GPU, this results in a total bidirectional bandwidth of 900 GB/s per GPU. This is over 7 times the 128 GB/s bidirectional bandwidth of a standard PCIe 5.0 x16 slot. 
+            In multi-GPU server nodes, these links connect to a 3rd-generation NVSwitch, a hardware fabric that enables all-to-all, non-blocking communication between the GPUs within the node and can extend connectivity across nodes.
+            <br>
+            NVLink's primary function is to establish a single, coherent memory address space for up to 256 GPUs, enabling direct memory access (DMA) between their individual VRAMs while bypassing the host CPU and PCIe bus. 
+            This architecture drastically reduces latency and increases bandwidth for collective communication operations (e.g., All-Reduce), which are critical performance bottlenecks in distributed computing. 
+            Consequently, it enables the efficient implementation of both model parallelism for neural networks that exceed single-GPU memory and large-scale data parallelism required by cutting-edge AI and HPC workloads.
         </p>
         <h3>Analogy for GPUDirect</h3>
         <p>
