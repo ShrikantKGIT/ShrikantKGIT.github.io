@@ -69,12 +69,38 @@
             This architecture drastically reduces latency and increases bandwidth for collective communication operations (e.g., All-Reduce), which are critical performance bottlenecks in distributed computing. 
             Consequently, it enables the efficient implementation of both model parallelism for neural networks that exceed single-GPU memory and large-scale data parallelism required by cutting-edge AI and HPC workloads.
         </p>
-        <h3>Analogy for GPUDirect</h3>
+        
+        <h3>GPUDirect</h3>
         <p>
-    To understand how GPUDirect works, think of your computer's components like an office. Normally, data has to take a winding path from storage (the "Mailroom") to the CPU (the "Secretary") before finally reaching the GPU (the "Graphics Department"). This creates a bottleneck. GPUDirect acts like an express elevator, allowing data to bypass the CPU and travel directly from storage to the GPU, dramatically speeding up the process.
+            To understand how GPUDirect works, think of your computer's components like an office. 
+            Normally, data has to take a winding path from storage (the "Mailroom") to the CPU (the "Secretary") before finally reaching the GPU (the "Graphics Department"). 
+            This creates a bottleneck. GPUDirect acts like an express elevator, allowing data to bypass the CPU and travel directly from storage to the GPU, dramatically speeding up the process.
+        </p>
+            <img src="images/GPUDirect Analogy.png" alt="An analogy explaining how GPUDirect creates a direct data path, bypassing the CPU." class="topic-image">
+        <p>
+            <br>
+            Parameter Storage and Model Loading Requirements
+            <br>
+            The memory footprint of a model is determined by its parameter count. Storing a model for inference using bfloat16 precision requires 2 bytes per parameter.
+            <br>
+            A 20-billion parameter model (GPB 20B) requires 20B × 2 bytes = 40 GB of VRAM. This fits comfortably within the 141 GB capacity of a single H200 GPU.
+            A 120-billion parameter model (GPT 120B) requires 120B × 2 bytes = 240 GB of VRAM. 
+            This exceeds the capacity of a single H200, necessitating model parallelism, where the model is partitioned across at least two interconnected GPUs.
         </p>
 
-<img src="images/GPUDirect Analogy.png" alt="An analogy explaining how GPUDirect creates a direct data path, bypassing the CPU." class="topic-image">
+        <p>
+            Accelerated Data Ingestion via GPUDirect Storage and RDMA
+            <br>
+            Fine-tuning GPT-120B is frequently an I/O-bound process where performance is limited by the data ingestion pipeline rather than raw compute. 
+            NVIDIA's GPUDirect Storage technology is used to mitigate this by eliminating the traditional data path bottleneck, where data is staged in a CPU-managed "bounce buffer" in system RAM before being 
+            copied to the GPU's VRAM (Storage -> System RAM -> VRAM). 
+            Instead, GPUDirect provides a kernel-level framework that allows the GPU's internal Direct Memory Access (DMA) engine to directly control data transfers from storage.
+            <br>
+            This direct path is typically facilitated over a high-speed network fabric InfiniBand) using the RDMA protocol. 
+            To interface with S3 HPOS, this architecture  utilizes an intermediary GPUDirect-aware parallel file system, which can present the object data as a POSIX-compliant file system. 
+            By completely bypassing the CPU and system RAM for data payload transfers, this method drastically reduces I/O latency, frees up CPU cycles, and saturates the H200's memory bandwidth. 
+            The result is a substantial reduction in epoch completion time, as the GPU cores are kept consistently fed with data, maximizing their utilization and accelerating the overall convergence of the fine-tuning task.
+        </p>
     </div>
 
     <div class="section">
