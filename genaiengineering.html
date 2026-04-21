@@ -68,20 +68,25 @@
     <br><br>
     The Transformer operates by projecting inputs into three matrices: <strong>Query (Q)</strong>, <strong>Key (K)</strong>, and <strong>Value (V)</strong>. The relationship between words is calculated using the following equation:
     <br><br>
-    <span style="font-family: 'Times New Roman', serif; font-size: 1.2em; display: block; text-align: center; margin: 10px 0;">
-        $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+    <span style="font-family: 'Times New Roman', serif; font-size: 1.4em; display: block; text-align: center; margin: 15px 0; font-weight: bold; color: #000;">
+        Attention(Q, K, V) = softmax( (QK<sup>T</sup>) / &radic;d<sub>k</sub> )V
     </span>
     <br>
     <strong>Breakdown of Operations:</strong>
     <br><br>
-    1. <strong>$QK^T$ (Dot Product):</strong> Measures the similarity between the "Query" (what we are looking for) and the "Key" (what each word offers). 
+    1. <strong>QK<sup>T</sup> (Dot Product):</strong> Measures the similarity between the "Query" (what we are looking for) and the "Key" (what each word offers). 
     <br>
-    2. <strong>$\sqrt{d_k}$ (Scaling):</strong> Divides by the square root of the dimension to prevent gradients from becoming too small, ensuring stable training.
+    2. <strong>&radic;d<sub>k</sub> (Scaling):</strong> Divides by the square root of the dimension of the keys to keep values manageable for the H200's FP8/FP16 precision logic.
     <br>
-    3. <strong>Softmax:</strong> Normalizes the scores into probabilities (weights) that sum to 1.
+    3. <strong>Softmax:</strong> Converts the scores into a probability distribution (weights) that sum to 1.
     <br>
-    4. <strong>Multiply by V:</strong> Applies these weights to the "Value" matrix to produce the final context-aware representation.
+    4. <strong>Multiply by V:</strong> Weights the "Value" matrix to extract the most relevant information for the current context.
 </p>
+
+
+
+
+        
 
         
     <strong>Experience THE H200 ... </strong>
