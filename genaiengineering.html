@@ -42,12 +42,27 @@
     <h1>Topics of Interest</h1>
 
     <div class="section">
-        <h2>Generative AI & Large Language Models</h2>
+        <h2>H200 & Large Language Models</h2>
         <p>
-            <p style="line-height: 1.6; font-family: sans-serif; color: #333;">
+            <p style="line-height: 1.6; font-family: monospace; color: #333;">
     The H200 is optimized for architectures born from the landmark paper <strong>"Attention Is All You Need."</strong> This work introduced the <strong>Transformer</strong>, a model that ditched complex recurrent designs for a streamlined "Attention" mechanism. Instead of processing data sequentially, it allows the AI to look at an entire sequence simultaneously, weighting the importance of different words regardless of their distance. This breakthrough enabled massive parallelization, paved the way for Large Language Models like GPT-4, and created the need for the specialized <strong>Transformer Engine</strong> found in modern NVIDIA hardware.
 </p>
 <p style="line-height: 2;">
+
+<p style="line-height: 1.6; font-family: monospace; color: #333; background-color: #f4f4f4; padding: 15px; border-left: 5px solid #76b900;">
+    <strong>Simplified Transformer Architecture:</strong>
+    <br><br>
+    At its core, a Transformer consists of two main stages: <strong>Encoding</strong> (understanding the input) and <strong>Decoding</strong> (generating the output). Inside these stages are three critical components:
+    <br><br>
+    1. <strong>Embeddings & Positional Encoding:</strong> Converts words into math vectors and adds a "time stamp" so the model knows the order of the words.
+    <br>
+    2. <strong>Multi-Head Attention:</strong> The "brain" that calculates relationships between all words in a sentence simultaneously to grasp context.
+    <br>
+    3. <strong>Feed-Forward Network:</strong> A series of dense mathematical layers that refine the data gathered by the attention mechanism.
+    <br><br>
+    <em>This design is what allows the H200 to process billions of parameters in parallel rather than one word at a time.</em>
+</p>
+    
     <strong>Experience THE H200 ... </strong>
     <br>
     <em> NVIDIA H200 GPUs interconnected via NVLink Fabric.</em>
