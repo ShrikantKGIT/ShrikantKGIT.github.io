@@ -57,7 +57,88 @@
             FP8 (8-bit Floating Point): ~4 PFLOPS (3,958 TFLOPS)
             <br>
             48 GPUs × 3.958 PFLOPS/GPU (FP8) = 190 PFLOPS
+
+<p style="line-height: 2;">
+    <strong>Aggregate System Performance: 190 PFLOPS (FP8)</strong>
+    <br>
+    <em>Configuration: 48x NVIDIA H200 GPUs interconnected via NVLink Fabric.</em>
+</p>
+
+<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 14px;">
+    <thead>
+        <tr style="background-color: #76b900; color: white; text-align: left;">
+            <th style="padding: 8px; border: 1px solid #ddd;">Component</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Description</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Function</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>PCIe Gen5 / NVLink</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">High-speed system interconnects</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Ingress/egress for host-to-GPU and GPU-to-GPU data.</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Command Processor</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">GPU Front-End hardware</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Parses driver commands and schedules thread blocks.</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>HBM3e Controller</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Memory interface logic</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Manages high-velocity data flow to/from 141GB VRAM.</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>141GB HBM3e</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">On-package high-bandwidth memory</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Stores weights, KV cache, and model activations.</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>L2 Cache</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Large on-chip staging buffer</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Reduces HBM latency by keeping "hot" data on-chip.</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>L1 / Shared Memory</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Ultra-low latency SM-local storage</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Holds intermediate operands close to the math units.</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Register File</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Fastest on-chip storage</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Directly feeds operands into Tensor and CUDA cores.</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Transformer Engine</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Dynamic precision logic</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Automates FP8/FP16 scaling to maximize throughput.</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>4th-gen Tensor Cores</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Specialized matrix math engines</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Executes GEMMs and Attention blocks at peak speed.</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>CUDA Cores</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">General-purpose ALUs</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Handles non-matrix logic, indexing, and reductions.</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Copy / DMA Engines</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Asynchronous data movers</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Background movement of results back to memory/host.</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>NVLink Fabric</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">GPU-to-GPU interconnect</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Scales inference across multiple GPUs (All-Reduce).</td>
+        </tr>
+    </tbody>
+</table>
+
+        
             <p style="line-height: 2;"> </p>
+        
             NVIDIA NVLink
             <br>
             <br>
