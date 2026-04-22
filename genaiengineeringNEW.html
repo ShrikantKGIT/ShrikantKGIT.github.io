@@ -3,272 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H200 & LLM Architecture - Shrikant Khaire</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>H200 & AI Architecture - Explained</title>
     <style>
         :root {
             --nv-green: #76b900;
             --nv-dark: #1a1a1a;
-            --nv-slate: #363050;
-            --bg-light: #f8f9fa;
-            --border: #e1e4e8;
+            --nv-bg: #fdfdfd;
+            --text-main: #333;
+            --box-bg: #f4f4f4;
+            --highlight-bg: #e8f5e9;
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            line-height: 1.6;
-            color: #24292e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: var(--text-main);
+            background-color: #fff;
             margin: 0;
-            display: flex;
-            background-color: white;
+            padding: 0;
         }
 
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            background: var(--bg-light);
-            border-right: 1px solid var(--border);
-            padding: 40px 20px;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        .sidebar h3 {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #6a737d;
-            margin-bottom: 15px;
-        }
-
-        .sidebar a {
-            display: block;
-            text-decoration: none;
-            color: #444;
-            padding: 8px 0;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-
-        .sidebar a:hover {
-            color: var(--nv-green);
-        }
-
-        /* Main Content */
-        .content {
-            flex: 1;
+        .container {
             max-width: 900px;
-            padding: 60px 80px;
             margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        nav {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 40px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--nv-green);
+            font-weight: bold;
+            font-family: monospace;
         }
 
         h1 {
             font-size: 2.5rem;
-            font-weight: 700;
             color: var(--nv-dark);
             margin-bottom: 10px;
-            border-bottom: 4px solid var(--nv-green);
-            display: inline-block;
         }
 
         h2 {
             font-size: 1.8rem;
-            margin-top: 50px;
-            color: var(--nv-slate);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
+            color: #2c3e50;
+            border-left: 8px solid var(--nv-green);
+            padding-left: 15px;
+            margin-top: 60px;
+            background: #f9f9f9;
         }
 
-        .intro-text {
-            font-size: 1.1rem;
+        h3 {
+            font-size: 1.3rem;
             color: #444;
-            margin-bottom: 30px;
+            margin-top: 30px;
         }
 
-        .tech-box {
-            background: var(--bg-light);
+        p {
+            margin-bottom: 20px;
+        }
+
+        .analogy-box {
+            background-color: var(--box-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #ccc;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+
+        .green-box {
+            background-color: var(--highlight-bg);
+            padding: 20px;
+            border-radius: 8px;
             border-left: 5px solid var(--nv-green);
-            padding: 25px;
-            margin: 30px 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .tech-box strong {
-            color: var(--nv-dark);
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+            font-family: monospace;
         }
 
         .math-block {
-            background: #fff;
-            border: 1px solid var(--border);
-            padding: 20px;
+            display: block;
             text-align: center;
-            font-family: 'serif';
-            font-size: 1.4rem;
-            margin: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-family: 'Times New Roman', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 25px 0;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #eee;
         }
 
-        /* Components Table */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 30px 0;
+            margin: 20px 0;
+            font-family: monospace;
             font-size: 0.9rem;
         }
 
         th {
-            background: var(--nv-dark);
+            background-color: var(--nv-green);
             color: white;
-            text-align: left;
             padding: 12px;
+            text-align: left;
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
+            padding: 10px;
+            border: 1px solid #ddd;
         }
 
-        tr:nth-child(even) {
-            background: #fafafa;
+        tr:nth-child(even) { background-color: #fafafa; }
+
+        .diagram-placeholder {
+            background: #eee;
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            color: #777;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-style: italic;
         }
 
-        tr:hover {
-            background: #f1f8e9;
-        }
-
-        .topic-image {
-            width: 100%;
-            max-width: 600px;
-            height: auto;
-            border-radius: 12px;
-            margin: 30px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 1px solid var(--border);
-        }
-
-        code, .monospace {
-            font-family: 'Fira Code', monospace;
-            background: #f0f0f0;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        @media (max-width: 1000px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .content { padding: 40px 20px; }
-        }
+        strong { color: #000; }
     </style>
 </head>
 <body>
 
-<nav class="sidebar">
-    <a href="index.html" style="font-weight:bold; margin-bottom: 20px;">← Back Home</a>
-    <h3>Hardware</h3>
-    <a href="#runtime">Runtime Components</a>
-    <a href="#nvlink">NVLink Fabric</a>
-    <a href="#memory">HBM3e & Cache</a>
-    <h3>Software & Logic</h3>
-    <a href="#vllm">vLLM & Paging</a>
-    <a href="#lifecycle">Inference Lifecycle</a>
-    <a href="#parallelism">Parallelism Strategies</a>
-    <a href="#quantization">Precision & FP8</a>
-</nav>
+<div class="container">
+    <nav><a href="index.html">← HOME</a></nav>
 
-<main class="content">
-    <h1>H200 & Large Language Models</h1>
-    
-    <p class="intro-text">
-        The NVIDIA H200 is specifically optimized for architectures born from the landmark paper <strong>"Attention Is All You Need."</strong> This breakthrough transitioned AI from sequential processing to massive parallelization, creating a need for the specialized hardware logic described below.
+    <h1>The H200 & Large Language Models</h1>
+    <p>
+        The H200 is optimized for architectures born from the landmark paper <strong>"Attention Is All You Need."</strong> 
+        This work introduced the <strong>Transformer</strong>, a model that ditched complex designs for a streamlined 
+        "Attention" mechanism. Instead of processing data one word at a time, it allows the AI to look at an entire 
+        sequence simultaneously.
     </p>
 
-    <div class="tech-box">
-        <strong>Simplified Transformer Architecture</strong>
-        At its core, a Transformer consists of <strong>Encoding</strong> and <strong>Decoding</strong>. Key phases include Embeddings (vector conversion), Multi-Head Attention (context brain), and Feed-Forward Networks (refinement). 
-        <br><br>
-        <em>This design allows the H200 to process billions of parameters in parallel rather than word-by-word.</em>
+    <div class="analogy-box">
+        <strong>Simplified Transformer Architecture:</strong><br><br>
+        1. <strong>Embeddings:</strong> Converts words into math vectors.<br>
+        2. <strong>Multi-Head Attention:</strong> The "brain" that calculates relationships between all words at once.<br>
+        3. <strong>Feed-Forward Network:</strong> Dense layers that refine the context.
     </div>
 
-    
-
-    <div class="tech-box" style="border-left-color: var(--nv-slate);">
+    <div class="green-box" style="margin-top:20px;">
         <strong>The Core Math: Scaled Dot-Product Attention</strong>
-        The H200's Tensor Cores are tuned to solve this specific equation:
-        <div class="math-block">
-            Attention(Q, K, V) = softmax( (QK<sup>T</sup>) / &radic;d<sub>k</sub> )V
-        </div>
-        This involves measuring similarity (Dot Product), Scaling for stability, and weighting the most relevant information (Softmax) for the current context.
+        <div class="math-block">Attention(Q, K, V) = softmax( (QK<sup>T</sup>) / &radic;d<sub>k</sub> )V</div>
+        This equation is how the H200 decides which words are important. It compares what we are looking for (Query) 
+        with what's available (Key) and extracts the best info (Value).
     </div>
 
-    <h2 id="runtime">Hardware Runtime Components</h2>
+    <h2 id="hw">Hardware Runtime Components</h2>
     <table>
         <thead>
             <tr>
                 <th>Component</th>
-                <th>Description</th>
                 <th>Function</th>
             </tr>
         </thead>
         <tbody>
-            <tr><td><strong>PCIe Gen5 / NVLink</strong></td><td>System Interconnects</td><td>Ingress/egress for host and peer GPU data.</td></tr>
-            <tr><td><strong>Command Processor</strong></td><td>GigaThread Engine</td><td>Orchestrates parallel execution and thread scheduling.</td></tr>
-            <tr><td><strong>HBM3e Controller</strong></td><td>Memory Logic</td><td>Manages 4.8 TB/s flow to VRAM.</td></tr>
-            <tr><td><strong>141GB HBM3e</strong></td><td>On-package RAM</td><td>Stores weights, KV cache, and activations.</td></tr>
-            <tr><td><strong>L2 Cache</strong></td><td>On-chip Buffer</td><td>Reduces HBM latency for "hot" data.</td></tr>
-            <tr><td><strong>Tensor Cores</strong></td><td>4th Gen Matrix Engines</td><td>Executes GEMMs and Attention at peak speed.</td></tr>
-            <tr><td><strong>CUDA Cores</strong></td><td>General Purpose ALUs</td><td>Handles non-matrix logic and activations.</td></tr>
+            <tr><td><strong>Command Processor</strong></td><td>Hardware orchestrator; schedules thousands of threads.</td></tr>
+            <tr><td><strong>HBM3e Controller</strong></td><td>Logic gateway managing 4.8 TB/s of data flow.</td></tr>
+            <tr><td><strong>141GB HBM3e</strong></td><td>Massive VRAM storing model weights and the KV Cache.</td></tr>
+            <tr><td><strong>L2 Cache</strong></td><td>On-chip staging buffer that keeps "hot" data near the cores.</td></tr>
+            <tr><td><strong>L1 / Shared Memory</strong></td><td>Ultra-fast, SM-local storage for single-cycle math access.</td></tr>
+            <tr><td><strong>Register File</strong></td><td>Zero-cycle latency storage physically wired to the math units.</td></tr>
+            <tr><td><strong>Transformer Engine</strong></td><td>Dynamic precision logic automating FP8/FP16 scaling.</td></tr>
+            <tr><td><strong>4th-gen Tensor Cores</strong></td><td>Specialized engines for massive matrix multiplication.</td></tr>
+            <tr><td><strong>CUDA Cores</strong></td><td>General processors for activation functions and indexing.</td></tr>
+            <tr><td><strong>Copy / DMA Engines</strong></td><td>Moves data in the background without stopping the math.</td></tr>
+            <tr><td><strong>NVLink Fabric</strong></td><td>900 GB/s interconnect that turns multiple GPUs into one.</td></tr>
         </tbody>
     </table>
 
-    <h2 id="vllm">vLLM: The Operating System for Fast AI</h2>
+    <div class="diagram-placeholder">[DIAGRAM: H200 Silicon Die & Memory Hierarchy]</div>
+
+    <h2 id="software">Software Innovation: vLLM & PagedAttention</h2>
     <p>
-        While hardware provides power, <strong>vLLM</strong> acts as the manager. It treats GPU memory like computer RAM using a breakthrough called <strong>PagedAttention</strong>.
+        If the H200 is the engine, <strong>vLLM</strong> is the transmission. In traditional systems, memory is wasted. 
+        vLLM fixes this with <strong>PagedAttention</strong>.
     </p>
 
-    <div class="tech-box" style="background-color: #e8f5e9; border-left-color: #2e7d32;">
-        <strong>The PagedAttention Solution</strong>
-        vLLM breaks conversations into small, fixed-size "pages." These can be scattered anywhere in the 141GB HBM3e, effectively eliminating memory fragmentation and allowing the H200 to serve 24x more users simultaneously.
+    <div class="analogy-box">
+        <strong>The Hotel Analogy (Memory Fragmentation):</strong><br>
+        Imagine a hotel where every guest is given a whole floor even if they are alone. The hotel looks "full" 
+        but is actually empty. vLLM treats memory like <strong>Virtual Memory</strong> in your laptop, breaking 
+        it into small "pages" so every byte of the 141GB is used efficiently.
     </div>
 
-    
-
-    <h2 id="lifecycle">Inference Lifecycle</h2>
-    <p>The journey from prompt to response involves four critical stages optimized for Hopper hardware:</p>
-    <ul>
-        <li><strong>Tokenization:</strong> Converting text to IDs (handled by CUDA cores).</li>
-        <li><strong>Prefill:</strong> Building context (Compute-bound; hits Tensor Cores).</li>
-        <li><strong>Decode:</strong> Generating tokens (Memory-bound; hits HBM3e bandwidth).</li>
-        <li><strong>Streaming:</strong> Sending results via NVLink Fabric in real-time.</li>
-    </ul>
-
-    
-
-    <h2 id="parallelism">Parallelism & Scaling</h2>
-    <p>To fit models that exceed 141GB, we use <strong>3D Parallelism</strong>:</p>
-    <ul>
-        <li><strong>Tensor Parallelism:</strong> Slicing individual math operations across GPUs.</li>
-        <li><strong>Pipeline Parallelism:</strong> Assigning different layers to different GPUs in an assembly line.</li>
-        <li><strong>Expert Parallelism (MoE):</strong> Routing data only to specialized "Expert" blocks to save power.</li>
-    </ul>
-
-    
-
-    <h2 id="quantization">Quantization & Precision</h2>
-    <p>The H200 speaks <strong>FP8</strong> natively. By using the <strong>Transformer Engine</strong>, we double math throughput compared to FP16. Advanced techniques like <strong>AWQ</strong> and <strong>GPTQ</strong> allow us to compress 70B+ parameter models onto a single chip while maintaining high accuracy.</p>
-
-    <div class="tech-box">
-        <strong>The Engineering Bottom Line</strong>
-        Hardware is only as good as the software stack. By combining the H200's raw PFLOPS with vLLM's memory management and 3D parallelism, we transform individual chips into a unified AI factory.
+    <h2 id="distillation">LLM-D: The Teacher & Student</h2>
+    <p>
+        <strong>Knowledge Distillation (LLM-D)</strong> is how we shrink giant models into faster versions. 
+        A massive "Teacher" model (like GPT-4) trains a smaller "Student" model to mimic its logic.
+    </p>
+    <div class="green-box">
+        The H200 is the perfect lab for this because its <strong>141GB VRAM</strong> allows both the giant 
+        Teacher and the tiny Student to sit in memory together, talking instantly over the <strong>NVLink Fabric</strong>.
     </div>
 
-</main>
+    <h2 id="lifecycle">The Inference Lifecycle</h2>
+    <p>What happens when you hit "Send"?</p>
+    <ol>
+        <li><strong>Tokenization:</strong> Text becomes numbers (CUDA Cores).</li>
+        <li><strong>Prefill:</strong> The AI digests your prompt all at once (Tensor Cores + FP8).</li>
+        <li><strong>Decode:</strong> The AI predicts the next word (HBM3e Bandwidth limited).</li>
+        <li><strong>Streaming:</strong> Results appear on your screen word-by-word.</li>
+    </ol>
+
+    <h2 id="kvcache">KV Cache Management</h2>
+    <p>The <strong>KV Cache</strong> is the AI's short-term memory.</p>
+    <div class="analogy-box">
+        <strong>Storage & Eviction:</strong><br>
+        If a conversation gets too long, the H200 either reuses memory (Pages), clears old data (Eviction), 
+        or moves it to the CPU (Offloading) to keep the response speed high.
+    </div>
+
+    <h2 id="parallelism">Parallelism: Building a Super-GPU</h2>
+    <p>Since giant models don't fit on one chip, we slice them up:</p>
+    <ul>
+        <li><strong>Tensor Parallelism:</strong> Splitting one math problem across many GPUs.</li>
+        <li><strong>Pipeline Parallelism:</strong> An assembly line where each GPU handles a few layers.</li>
+        <li><strong>Expert Parallelism:</strong> Only waking up the "Expert" GPUs needed for your specific question.</li>
+    </ul>
+
+    <h2 id="quantization">Quantization: Precision Logic</h2>
+    <p>
+        <strong>FP8 (8-bit Floating Point)</strong> is the "native language" of the H200. It allows the GPU 
+        to move half as much data but do math twice as fast. Using <strong>AWQ</strong> or <strong>GPTQ</strong> 
+        compression, we can fit a model that used to need 4 GPUs onto just one.
+    </p>
+
+    <h2 id="networking">Networking: The Nervous System</h2>
+    <table>
+        <tr>
+            <td><strong>NVLink</strong></td>
+            <td>900 GB/s highway for GPUs inside one server box.</td>
+        </tr>
+        <tr>
+            <td><strong>InfiniBand</strong></td>
+            <td>Specialized data center cables for node-to-node talk.</td>
+        </tr>
+        <tr>
+            <td><strong>RDMA</strong></td>
+            <td>Allows one GPU to reach into another's memory without asking the CPU.</td>
+        </tr>
+    </table>
+
+    <h2 id="orch">Orchestration & Observability</h2>
+    <p>
+        <strong>llm-d</strong> on <strong>Kubernetes</strong> acts like a flight controller, deciding 
+        which H200 should handle your request. It monitors "Vital Signs" like:
+    </p>
+    <ul>
+        <li><strong>TTFT:</strong> Time to First Token (How fast it starts).</li>
+        <li><strong>TPS:</strong> Tokens Per Second (How fast it talks).</li>
+        <li><strong>Utilization:</strong> Making sure the GPUs aren't sitting idle.</li>
+    </ul>
+
+    <h2 id="compat">Compatibility Checklist</h2>
+    <div class="green-box">
+        To run this stack, you need: <strong>SXM5 Form Factor</strong>, <strong>CUDA 12+</strong>, 
+        and <strong>Driver 550+</strong>. This ensures the hardware can see the full 141GB of HBM3e 
+        and use the Transformer Engine.
+    </div>
+
+    <p style="text-align: center; margin-top: 80px; font-style: italic; color: #888;">
+        Democratizing AI Performance Knowledge &bull; Shrikant Khaire
+    </p>
+</div>
 
 </body>
 </html>
