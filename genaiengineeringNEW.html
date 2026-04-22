@@ -89,7 +89,15 @@
     
     <h3>"Attention Is All You Need": The Foundation</h3>
     <p class="section-intro">
-        The 2017 paper "Attention Is All You Need" revolutionized AI by introducing the <strong>Transformer</strong> architecture, which replaced complex recurrent networks with a mechanism called <strong>Self-Attention</strong>. This allowed models to process entire sequences of text simultaneously rather than word-by-word, enabling massive parallelization on GPUs. By using Queries, Keys, and Values, the model calculates the relevance of every word in a sentence to every other word, regardless of distance. This breakthrough eliminated the "forgetting" problem in long texts and paved the way for the trillion-parameter Large Language Models (LLMs) we use today, like GPT-4 and Llama-3.
+        The 2017 paper “Attention Is All You Need” changed modern AI by introducing the Transformer architecture. Instead of using recurrent networks that process text one step at a time, the Transformer uses a method called self-attention. This lets the model look at the whole sequence at once, which makes training much faster and works much better on GPUs.
+        <br>
+        Self-attention works by using Queries, Keys, and Values. In simple terms, the model checks how important each word is compared to every other word in the sentence. That means it can understand relationships between words even if they are far apart. This is a big improvement over older models that often lost track of earlier context in long text.
+        <br>
+        This design solved an important problem in language modeling: handling long-range dependencies. Older systems could struggle to remember information from many words earlier in a paragraph. Transformers keep that information available much more effectively, so they can handle longer and more complex inputs. This is one reason they became the base for large language models.
+        <br>
+        The Transformer architecture also made large-scale parallel computing practical for language tasks. Because the model does not have to read text strictly word-by-word, many operations can run at the same time. That makes it a much better fit for modern GPU hardware. This efficiency helped open the door to today’s large models, including GPT-4 and Llama-3.
+        <br>
+        For example, in the sentence “The trophy didn’t fit in the suitcase because it was too small,” the word “it” could refer to the trophy or the suitcase. A Transformer can use self-attention to compare “it” with the other words and figure out that “it” most likely refers to the suitcase. That ability to connect words across a sentence is one of the main reasons Transformers work so well.
     </p>
 
     <div class="math-box">
