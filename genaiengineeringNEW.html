@@ -86,74 +86,51 @@
 <body>
 
     <h1>H200 & Large Language Models: The Full-Stack Blueprint</h1>
+    
+    <h3>"Attention Is All You Need": The Foundation</h3>
     <p class="section-intro">
-        From silicon-level arithmetic to global cluster orchestration. This master reference explores how the NVIDIA H200 
-        leverages 141GB of HBM3e and the Transformer Engine to power the next generation of AI.
+        The 2017 paper "Attention Is All You Need" revolutionized AI by introducing the <strong>Transformer</strong> architecture, which replaced complex recurrent networks with a mechanism called <strong>Self-Attention</strong>. This allowed models to process entire sequences of text simultaneously rather than word-by-word, enabling massive parallelization on GPUs. By using Queries, Keys, and Values, the model calculates the relevance of every word in a sentence to every other word, regardless of distance. This breakthrough eliminated the "forgetting" problem in long texts and paved the way for the trillion-parameter Large Language Models (LLMs) we use today, like GPT-4 and Llama-3.
     </p>
 
     <div class="math-box">
-        Attention(Q, K, V) = softmax( (QK<sup>T</sup>) / &radic;d<sub>k</sub> )V
+        $$Attention(Q, K, V) = \text{softmax}\left( \frac{QK^T}{\sqrt{d_k}} \right)V$$
     </div>
 
     
 
-    <h2>1. The Hardware: Silicon Architecture</h2>
-    <p>Inside every H200 SM (Streaming Multiprocessor) are specialized units designed to keep the world's most complex matrix math running at 190 PFLOPS.</p>
+    <h2>1. Hardware: The Inference Execution Order</h2>
+    <p>When an API call initiates inference, these components are engaged in the following physical order to handle the data flow:</p>
     
     <table>
         <thead>
             <tr>
                 <th style="width: 18%;">Component</th>
-                <th style="width: 22%;">The Analogy</th>
-                <th>Technical Role (Deep Dive)</th>
+                <th style="width: 22%;">Core Analogy</th>
+                <th>Technical Role (Inference Engagement Order)</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><b>4th-Gen Tensor Cores</b></td>
-                <td>The "Math Turbo"</td>
+                <td><b>PCIe Gen5 / NVLink</b></td>
+                <td>The "Front Door"</td>
                 <td>
                     <ul class="tech-role-list">
-                        <li>Executes massive Matrix-Multiply-Accumulate (MMA) math in a single clock cycle.</li>
-                        <li>Introduces native <b>FP8 support</b>, providing 2x throughput over previous FP16 models.</li>
-                        <li>Handles the heavy $QK^T$ dot-product operations essential for Transformer Attention.</li>
-                        <li>Includes "Structured Sparsity" hardware to double speed by skipping zero-value weights.</li>
+                        <li>The primary ingress point for the API request to move from CPU host memory to the GPU.</li>
+                        <li><b>NVLink</b> provides a 900 GB/s inter-GPU highway for cross-node requests.</li>
+                        <li>Triggers the <b>Command Processor</b> to begin parsing the incoming kernel instructions.</li>
+                        <li>Ensures multi-GPU systems can share the <b>KV Cache</b> across a unified address space.</li>
                     </ul>
                 </td>
             </tr>
             <tr>
-                <td><b>CUDA Cores</b></td>
-                <td>The "General Workers"</td>
+                <td><b>HBM3e VRAM</b></td>
+                <td>The "Library"</td>
                 <td>
                     <ul class="tech-role-list">
-                        <li>High-performance ALUs designed for flexible scalar and vector mathematical operations.</li>
-                        <li>Executes non-matrix "Activation Functions" like ReLU, GELU, and Softmax probability logic.</li>
-                        <li>Manages complex memory indexing and data rearrangement (Transposing) for the Tensor Cores.</li>
-                        <li>Handles "Layer Normalization" to keep neural network values within a stable numerical range.</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td><b>Register File</b></td>
-                <td>The "Toolbelt"</td>
-                <td>
-                    <ul class="tech-role-list">
-                        <li>The largest on-chip SRAM array, physically integrated next to the math pipelines.</li>
-                        <li>Operates at the full clock frequency of the GPU with <b>zero-cycle access latency</b>.</li>
-                        <li>Stores "live" variables and immediate operands for thousands of concurrent threads.</li>
-                        <li>Minimizes "Instruction Stall" time by keeping active values out of slower main memory.</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td><b>L1/Shared Memory</b></td>
-                <td>The "Workbench"</td>
-                <td>
-                    <ul class="tech-role-list">
-                        <li>Unified high-speed memory block local to each SM that can be dynamically partitioned.</li>
-                        <li>Allows threads within a block to exchange intermediate results without using global RAM.</li>
-                        <li>Enables "Thread Block Clusters" to communicate with neighboring SMs over a dedicated network.</li>
-                        <li>Crucial for low-latency synchronization during complex Transformer multi-head attention.</li>
+                        <li>Holds the static Model Weights and the dynamic <b>Embedding Tables</b> needed for detokenization.</li>
+                        <li>Serves as the massive 141GB pool for the <b>KV Cache</b> created during the Prefill phase.</li>
+                        <li>Delivers a peak 4.8 TB/s bandwidth to keep the math cores saturated.</li>
+                        <li>Engaged immediately to fetch the specific weights required for the current layer calculation.</li>
                     </ul>
                 </td>
             </tr>
@@ -162,34 +139,10 @@
                 <td>The "Warehouse"</td>
                 <td>
                     <ul class="tech-role-list">
-                        <li>Massive on-chip staging area that serves as the central traffic hub for all SM data.</li>
-                        <li>Captures "Hot Data" (frequently used weights and activations) to hide HBM3e latency.</li>
-                        <li>Uses advanced compression logic to maximize the effective amount of data stored on-die.</li>
-                        <li>Reduces power consumption by preventing expensive electrical trips to external memory stacks.</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td><b>HBM3e VRAM</b></td>
-                <td>The "Super-Sized Storage"</td>
-                <td>
-                    <ul class="tech-role-list">
-                        <li>141GB of 3D-stacked DRAM connected via a silicon interposer for <b>4.8 TB/s</b> bandwidth.</li>
-                        <li>Upgraded from H100’s 80GB HBM3 to accommodate 76% more capacity for larger AI models.</li>
-                        <li>Stores the entire model weight set and the persistent KV Cache for long conversations.</li>
-                        <li>Larger capacity allows for significantly bigger "Batch Sizes" and longer context windows.</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td><b>Transformer Engine</b></td>
-                <td>The "Translator"</td>
-                <td>
-                    <ul class="tech-role-list">
-                        <li>Dedicated hardware logic that monitors the numerical range of network layers in real-time.</li>
-                        <li>Dynamically casts data into the most efficient format (switching between FP8 and FP16).</li>
-                        <li>Maximizes throughput by using FP8 for math while keeping FP16 for sensitive calculations.</li>
-                        <li>Maintains high accuracy in trillion-parameter models while reducing their memory footprint.</li>
+                        <li>Acts as a high-density, on-die staging area for weights pulled from <b>HBM3e</b>.</li>
+                        <li>Captures "Hot Data" like layer parameters that are reused across many tokens.</li>
+                        <li>Significantly reduces the electrical and latency cost of repeated memory trips.</li>
+                        <li>Feeds the <b>L1/Shared Memory</b> of individual SMs at ultra-low latency.</li>
                     </ul>
                 </td>
             </tr>
@@ -198,22 +151,58 @@
                 <td>The "Conveyor Belt"</td>
                 <td>
                     <ul class="tech-role-list">
-                        <li>Specialized units that handle data transfers independently of the CUDA and Tensor Cores.</li>
-                        <li>Performs "Asynchronous Prefetching" to load the next set of weights while math is running.</li>
-                        <li>Moves results from the GPU back to the CPU or peer GPUs without consuming math cycles.</li>
-                        <li>Critical for "Overlapping" communication and computation to reach 100% hardware utilization.</li>
+                        <li>Works asynchronously to move weights from L2 into the SMs while the math cores are busy.</li>
+                        <li>Engaged to pre-fetch the <i>next</i> layer's data to prevent the GPU from idling.</li>
+                        <li>Handles the background movement of <b>KV Cache</b> pages between GPUs or to CPU RAM.</li>
+                        <li>Ensures data movement is "overlapped" with computation for maximum efficiency.</li>
                     </ul>
                 </td>
             </tr>
             <tr>
-                <td><b>NVLink Fabric</b></td>
-                <td>The "Super-Highway"</td>
+                <td><b>CUDA Cores</b></td>
+                <td>The "General Workers"</td>
                 <td>
                     <ul class="tech-role-list">
-                        <li>Proprietary chip-to-chip interconnect providing <b>900 GB/s</b> of bidirectional bandwidth.</li>
-                        <li>Establishes a "Coherent Memory Space" so up to 256 GPUs can share data as one unit.</li>
-                        <li>Enables "All-Reduce" collective operations essential for syncing results in parallel AI tasks.</li>
-                        <li>Allows models too large for one GPU to be "sharded" across a cluster with minimal delay.</li>
+                        <li>Handles initial token ID lookups and positional encoding logic.</li>
+                        <li>Calculates non-matrix logic such as <b>Softmax</b>, LayerNorm, and sampling.</li>
+                        <li>Orchestrates the pointer arithmetic for <b>vLLM PagedAttention</b> block mapping.</li>
+                        <li>Engaged at every step to manage the glue logic between major matrix math blocks.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Transformer Engine</b></td>
+                <td>The "Auto-Translator"</td>
+                <td>
+                    <ul class="tech-role-list">
+                        <li>Engaged before matrix math to analyze data ranges and cast them into <b>FP8</b>.</li>
+                        <li>Dynamically scales tensors to maintain precision while using 8-bit formats.</li>
+                        <li>Ensures the <b>Tensor Cores</b> receive data in the most efficient possible format.</li>
+                        <li>Crucial for reducing the memory footprint of intermediate activations.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><b>4th-Gen Tensor Cores</b></td>
+                <td>The "Math Turbo"</td>
+                <td>
+                    <ul class="tech-role-list">
+                        <li>The heavy hitters engaged for the $QK^T$ and $V$ matrix multiplication phases.</li>
+                        <li>Runs <b>FP8 MMA</b> operations at peak speed once the Transformer Engine prepares the data.</li>
+                        <li>Computes the core "Attention" mechanism that defines the model's intelligence.</li>
+                        <li>Uses "Structured Sparsity" to bypass zero-value weights and speed up inference.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Register File</b></td>
+                <td>The "Toolbelt"</td>
+                <td>
+                    <ul class="tech-role-list">
+                        <li>Physically integrated with the Tensor/CUDA cores for <b>zero-cycle access</b>.</li>
+                        <li>Holds the active operands for the math currently being executed in the pipeline.</li>
+                        <li>Engaged at the very final nanoseconds of the calculation before results are stored.</li>
+                        <li>Prevents "Instruction Stalls" by keeping the most critical data closest to the math.</li>
                     </ul>
                 </td>
             </tr>
@@ -222,169 +211,111 @@
 
     
 
-    <h2>2. The Software: vLLM & Memory Optimization</h2>
-    <p>Raw hardware requires an "Operating System" to prevent memory waste. <b>vLLM</b> provides the logic to saturate the H200's potential.</p>
+    <h2>2. Software: vLLM & Memory Optimization</h2>
+    <p>Raw hardware needs smart management. <b>vLLM</b> acts as the "Operating System" for AI.</p>
     
     <div class="analogy-card">
-        <strong>PagedAttention: The Hotel Manager</strong><br>
-        Traditional AI systems waste memory by reserving big blocks that go unused (Internal Fragmentation). 
-        vLLM breaks conversation memory into small "Pages" (Blocks). Like Virtual Memory in a laptop, 
-        it maps these pages anywhere in the 141GB VRAM, ensuring not a single byte is wasted.
+        <strong>PagedAttention: The Virtual Manager</strong><br>
+        Traditional systems waste memory by reserving big blocks. Like Virtual Memory in a laptop, vLLM breaks memory into small "Pages." It maps these pages anywhere in the 141GB VRAM, ensuring every byte is utilized.
     </div>
 
-    <h3>Detailed vLLM Architecture</h3>
+    <h3>Detailed vLLM Architecture & Scheduling</h3>
     <ul class="tech-role-list">
-        <li><b>Logical KV Management:</b> vLLM abstracts the Key-Value (KV) cache into fixed-size logical blocks. It stores non-contiguous sequences of tokens as if they were one continuous stream, eliminating memory gaps.</li>
-        <li><b>The Block Manager:</b> Acts as the "Traffic Controller," maintaining a <b>Block Table</b> (similar to an OS Page Table) that maps logical conversation fragments to physical areas of the 141GB HBM3e.</li>
-        <li><b>Zero-Waste Allocation:</b> Old frameworks often left 60% of VRAM empty but "reserved." vLLM allocates memory only when a token is actually generated, achieving near-100% VRAM utilization.</li>
-        <li><b>Shared Prefix Caching:</b> Recognizes when multiple users share a document or system prompt. It stores the "Prefix" memory once and shares it across all sessions, saving massive amounts of VRAM.</li>
-        <li><b>Copy-on-Write Logic:</b> When a conversation "forks," vLLM shares existing history blocks and only creates a new "page" when the two conversation paths begin to differ.</li>
+        <li><b>The Block Manager:</b> Maps logical conversation pieces to physical HBM3e locations using a <b>Block Table</b>.</li>
+        <li><b>Continuous Batching:</b> Unlike a bus that waits for every seat to be full, vLLM slides new users into the calculation the millisecond another user finishes a token.</li>
+        <li><b>Shared Prefix Caching:</b> Stores common system prompts (like a 20-page legal document) once and shares it among all users, saving massive VRAM.</li>
+        <li><b>Chunked Prefill:</b> Breaks massive prompts into smaller chunks so they don't "block" the GPU for users waiting on single-word responses.</li>
+        <li><b>Preemption:</b> If VRAM is full, it pauses low-priority requests and swaps their <b>KV Cache</b> to CPU RAM to maintain system stability.</li>
     </ul>
 
     
 
-    <h3>Batching & Scheduling Dynamics</h3>
-    <ul class="tech-role-list">
-        <li><b>Continuous Batching:</b> vLLM schedules at the individual token level. As soon as one user finishes their sentence, the next request slides into that math slot instantly without waiting for the rest of a "batch."</li>
-        <li><b>Preemption & Swapping:</b> If VRAM fills completely, the scheduler pauses low-priority requests and uses <b>Copy Engines</b> to swap their KV cache to CPU RAM until GPU space opens up.</li>
-        <li><b>Interleaved Scheduling:</b> Carefully balances "Prefill" (heavy understanding) and "Decode" (generating words). This ensures a fast <b>Time to First Token (TTFT)</b> without slowing down ongoing essays.</li>
-        <li><b>Multi-GPU Load Balancing:</b> Works with <b>llm-d</b> to route requests to the GPU that already holds the "hot" KV cache for a specific context, reducing the need to move data over the network.</li>
-        <li><b>Chunked Prefill:</b> Breaks massive 10,000-word prompts into smaller chunks. This prevents a single long prompt from "blocking" the GPU and allows other users' words to keep streaming.</li>
-    </ul>
-
-    
-
-    <h2>3. The Request Lifecycle: From Prompt to Token</h2>
-    <p>AI work is divided into two distinct mathematical modes: the <b>Prefill</b> (Reading/Understanding) and the <b>Decode</b> (Writing/Generating).</p>
+    <h2>3. The Request Lifecycle: From Prompt to Token (GPTOSS Example)</h2>
+    <p>Let's follow a request through the <b>GPTOSS</b> stack (GPT on Open-Source Software).</p>
 
     <div class="flow-step">
-        <b>Stage 1: Tokenization & Embedding (The Translator)</b>
-        <ul class="tech-role-list">
-            <li><b>The Action:</b> Your text is chopped into "Tokens" and converted into math coordinates (Vectors).</li>
-            <li><b>Hardware Role:</b> <b>CUDA Cores</b> handle lookup logic; <b>HBM3e</b> stores the massive embedding dictionary.</li>
-        </ul>
+        <b>1. Tokenization (The Translator)</b>
+        <p><b>Example:</b> You type "Describe the H200." The software (vLLM) uses a detokenizer on <b>CUDA Cores</b> to turn this into IDs [154, 892, 44]. The <b>HBM3e</b> fetches the corresponding vector embeddings.</p>
     </div>
 
     <div class="flow-step">
-        <b>Stage 2: The Prefill Phase (Understanding the Context)</b>
-        <ul class="tech-role-list">
-            <li><b>The Action:</b> The GPU processes your *entire* prompt simultaneously to calculate Attention scores and grasp meaning.</li>
-            <li><b>The Bottleneck:</b> <b>Compute-Bound</b>. Success depends on the 190 PFLOPS of <b>4th-Gen Tensor Core</b> power.</li>
-        </ul>
+        <b>2. Prefill (Understanding the Context)</b>
+        <p><b>Example:</b> The <b>Transformer Engine</b> casts the embeddings to <b>FP8</b>. The <b>Tensor Cores</b> run the $QK^T$ math for all 4 words at once. The GPU calculates that "H200" is the subject and "Describe" is the intent.</p>
     </div>
 
     <div class="flow-step">
-        <b>Stage 3: KV Cache Creation (Writing the Short-Term Memory)</b>
-        <ul class="tech-role-list">
-            <li><b>The Action:</b> The "meaning" of your prompt is saved as Keys and Values so the AI doesn't have to re-read your question for every word.</li>
-            <li><b>Hardware Role:</b> Managed by <b>vLLM’s Block Manager</b>, which writes fragments into "Pages" within the <b>141GB HBM3e</b>.</li>
-        </ul>
+        <b>3. KV Cache Creation (Memory Storage)</b>
+        <p><b>Example:</b> The "meaning" of your prompt is saved. vLLM's <b>Block Manager</b> allocates physical pages in <b>HBM3e</b> to store the Keys and Values for those 4 tokens so they aren't recalculated for the next word.</p>
     </div>
 
     <div class="flow-step">
-        <b>Stage 4: The Decode Phase (The Word-by-Word Marathon)</b>
-        <ul class="tech-role-list">
-            <li><b>The Action:</b> The AI predicts <i>one single token</i> at a time by looking back at the KV Cache and picking the next likely word.</li>
-            <li><b>The Bottleneck:</b> <b>Memory-Bandwidth Bound</b>. The hand can only move as fast as the "ink" (4.8 TB/s) flows from memory.</li>
-        </ul>
+        <b>4. Decode (The Generation Loop)</b>
+        <p><b>Example:</b> The AI predicts the first word: "The." To do this, <b>HBM3e</b> streams 70B parameters through the <b>L2 Cache</b> at 4.8 TB/s. The <b>Tensor Cores</b> pick the most likely next word.</p>
     </div>
 
     <div class="flow-step">
-        <b>Stage 5: Sampling & Detokenization (The Output)</b>
-        <ul class="tech-role-list">
-            <li><b>The Action:</b> Math scores are turned into probabilities, a word is "Sampled," and the ID is converted back to human text.</li>
-            <li><b>Hardware Role:</b> <b>CUDA Cores</b> handle sampling; <b>NVLink Fabric</b> streams results to the user interface.</li>
-        </ul>
+        <b>5. Streaming Output</b>
+        <p><b>Example:</b> The word "The" is converted back from ID [467] to text. The <b>NVLink</b> fabric moves this token to the <b>ConnectX NIC</b>, and it appears on your screen instantly.</p>
     </div>
+
+    <h2>4. Scaling: Parallelism & Large-Scale Document Parsing</h2>
+    <p>When an AI is asked to parse 100,000 legal documents simultaneously, a single GPU isn't enough.</p>
 
     <div class="highlight-box">
-        <strong>High School Summary: The Exam Analogy</strong><br>
-        <b>Prefill</b> is when you sit down and read the entire 5-page question paper at once (intense brain work). <br>
-        <b>Decode</b> is when you write your answer one letter at a time. It doesn't take much "brain power," but your hand only moves as fast as the ink flows from the pen.
+        <strong>Large-Scale Parsing Example:</strong><br>
+        Imagine an insurance company analyzing 10,000 claims. 
+        <ul>
+            <li><b>Tensor Parallelism</b> is used to split the heavy "Attention" math across 8 GPUs in an HGX box to keep the speed high.</li>
+            <li><b>Pipeline Parallelism</b> allows the 400B parameter model to be spread across 4 server nodes.</li>
+            <li><b>Expert Parallelism (MoE)</b> routes medical claims to the "Medical Expert" GPU and auto claims to the "Mechanical Expert" GPU.</li>
+            <li><b>InfiniBand/RDMA</b> allows these servers to share the <b>KV Cache</b> of common legal clauses at light-speed without the CPU slowing down the ingestion.</li>
+        </ul>
     </div>
 
     
 
-    <h2>4. Scaling: Parallelism & Networking</h2>
-    <p>Since trillion-parameter models won't fit in 141GB, we use <b>3D Parallelism</b> to build a massive "Super-GPU."</p>
+    <h2>5. Optimization: Precision & Distillation (The H200 Advantage)</h2>
+    <p>Optimization is how we squeeze more performance out of the same silicon.</p>
 
-    <div class="tech-grid">
-        <div class="analogy-card">
-            <strong>Tensor Parallelism</strong><br>
-            Splits one math operation into vertical/horizontal slices. GPU A does the top, GPU B does the bottom.
-            <ul class="tech-role-list" style="font-size: 0.85rem;">
-                <li><b>Hardware Hero:</b> 900 GB/s <b>NVLink</b> for instant syncing.</li>
-                <li><b>Benefit:</b> Slashes latency of a single token.</li>
-            </ul>
-        </div>
-        <div class="analogy-card">
-            <strong>Pipeline Parallelism</strong><br>
-            An assembly line where each GPU handles a set of layers (e.g., GPU 1 does layers 1-20).
-            <ul class="tech-role-list" style="font-size: 0.85rem;">
-                <li><b>Hardware Hero:</b> <b>Copy Engines</b> for background handoffs.</li>
-                <li><b>Benefit:</b> Allows massive models to fit across nodes.</li>
-            </ul>
-        </div>
+    <div class="highlight-box">
+        <strong>Example: Real-Time Translation</strong><br>
+        To make a translation app feel instant:
+        <ul>
+            <li><b>Transformer Engine (Software/Hardware):</b> It notices the input is simple and swaps the math from FP16 to <b>FP8</b>. This doubles the words-per-second without the user noticing a drop in quality.</li>
+            <li><b>Knowledge Distillation (LLM-D):</b> Engineers use a giant 400B Teacher model to train a tiny 8B Student model. The student learns the "nuance" of slang but runs 10x faster on the H200 because it fits entirely in the <b>L2 Cache</b>.</li>
+        </ul>
     </div>
-
-    <h3>Expert Parallelism & Interconnects</h3>
-    <ul class="tech-role-list">
-        <li><b>Mixture of Experts (MoE):</b> Slices the model by "Specialty." Only 2 specialized "Experts" GPUs wake up for any word, saving massive electrical and compute costs.</li>
-        <li><b>RDMA (Remote Direct Memory Access):</b> Allows a GPU in one server to read from another's VRAM across the network without asking the CPU, slashing multi-node lag.</li>
-        <li><b>ConnectX SmartNICs:</b> Network cards with their own "brains" that handle traffic so <b>CUDA Cores</b> stay focused on AI.</li>
-        <li><b>GPUDirect Storage:</b> An express elevator that pulls model weights directly from SSD to <b>HBM3e</b>, bypassing the slow CPU "Secretary."</li>
-    </ul>
-
-    
-
-    <h2>5. Optimization: Precision & Distillation</h2>
-    <p>We maximize efficiency by representing math differently and shrinking intelligence into smaller "Student" models.</p>
-
-    <ul class="tech-role-list">
-        <li><b>FP8 & Mixed Precision:</b> Moving from 16-bit to 8-bit cuts data size in half. The <b>Transformer Engine</b> multiplies in FP8 for speed but accumulates in FP32 to maintain accuracy.</li>
-        <li><b>AWQ (Activation-aware Quantization):</b> Protects the most important 1% of weights with high precision while compressing the rest to 4-bit, keeping the AI smart but tiny.</li>
-        <li><b>Knowledge Distillation (LLM-D):</b> A massive "Teacher" (GPT-4) trains a "Student" (Llama-8B) to mimic its probability distributions (Logits), creating a fast model with "expert" nuance.</li>
-        <li><b>Zero-Copy Memory:</b> Shares pointers between CPU and GPU via <b>PCIe Gen5</b>, eliminating the need to "double-buffer" data and saving VRAM.</li>
-    </ul>
-
-    
 
     <h2>6. Orchestration & Observability: The Control Plane</h2>
-    <p>Managing 1,000 GPUs requires <b>llm-d</b> on <b>Kubernetes</b> to track every "vital sign" and audit trail.</p>
-    
-    <div class="analogy-card">
-        <strong>The Flight Controller (llm-d)</strong><br>
-        Tracks the health of every H200 and routes users to the GPU with the lowest "Queue Depth" and the highest "Cache Hit Rate."
-    </div>
+    <p>Managing a cluster of H200s requires a "Flight Controller" like <b>llm-d</b> on <b>Kubernetes</b>.</p>
 
-    <ul class="tech-role-list">
-        <li><b>Smart Routing:</b> llm-d knows which GPU already has your 5,000-word PDF in memory. Routing you there slashes <b>TTFT</b> by up to 70%.</li>
-        <li><b>Vital Signs Monitoring:</b> We track <b>Tokens Per Second (TPS)</b>, <b>Memory Temperature</b>, and <b>Cache Pressure</b>. If a chip gets too hot, traffic is diverted.</li>
-        <li><b>The Audit Trail:</b> Every request logs <code>prompt_tokens</code> and <code>model_version</code>. This ensures reproducibility and helps finance calculate "Cost per Million Tokens."</li>
-        <li><b>Distributed Tracing:</b> Follows a request from User → Gateway → GPU using <b>OpenTelemetry</b> to find exactly where any delay occurred.</li>
-    </ul>
+    <div class="analogy-card">
+        <strong>How Observability Drives Optimization:</strong><br>
+        If the <b>Observability Dashboard</b> shows that <b>Time to First Token (TTFT)</b> is increasing, it's a signal. The manager (llm-d) sees that the <b>KV Cache Pressure</b> is too high on Node A. 
+        <br><br>
+        <b>The Optimization:</b> llm-d automatically triggers <b>Prefix Caching</b> or routes new users to Node B, which has more <b>HBM3e</b> free space. By watching the "Vital Signs" (Metrics), the software optimizes the hardware in real-time, ensuring no GPU is wasted and every user gets a fast response.
+    </div>
 
     
 
     <h2>7. Compatibility Stack</h2>
     <div class="tech-grid" style="background: #f0f0f0; padding: 25px; border-radius: 8px;">
         <div>
-            <b>Hardware & Driver:</b><br>
-            • SXM5 Form Factor (HGX)<br>
+            <b>Hardware Requirements:</b><br>
+            • SXM5 Form Factor (HGX/SuperPOD)<br>
             • NVIDIA Driver R550+<br>
-            • PCIe Gen5 Interconnect
+            • PCIe Gen5 & NVLink 4.0
         </div>
         <div>
-            <b>Software & Frameworks:</b><br>
-            • CUDA 12.x (FP8 support)<br>
-            • PyTorch / JAX / TensorRT-LLM<br>
-            • Kubernetes / llm-d / vLLM
+            <b>Software Requirements:</b><br>
+            • CUDA 12.x+ (FP8 Native)<br>
+            • vLLM / TensorRT-LLM<br>
+            • Kubernetes Gateway API / llm-d
         </div>
     </div>
 
     <footer>
-        <p>Democratizing AI Performance Knowledge • One-Page Master Reference • Shrikant Khaire</p>
-        <p>&copy; 2026</p>
+        <p>Democratizing AI Performance Knowledge • 2026</p>
     </footer>
 
 </body>
