@@ -90,18 +90,27 @@
     <h3>"Attention Is All You Need": The Foundation</h3>
     <p class="section-intro">
         The 2017 paper “Attention Is All You Need” changed modern AI by introducing the Transformer architecture. Instead of using recurrent networks that process text one step at a time, the Transformer uses a method called self-attention. This lets the model look at the whole sequence at once, which makes training much faster and works much better on GPUs.
-        <br>
+        <br><br>
         Self-attention works by using Queries, Keys, and Values. In simple terms, the model checks how important each word is compared to every other word in the sentence. That means it can understand relationships between words even if they are far apart. This is a big improvement over older models that often lost track of earlier context in long text.
-        <br>
+        <br><br>
         This design solved an important problem in language modeling: handling long-range dependencies. Older systems could struggle to remember information from many words earlier in a paragraph. Transformers keep that information available much more effectively, so they can handle longer and more complex inputs. This is one reason they became the base for large language models.
-        <br>
+        <br><br>
         The Transformer architecture also made large-scale parallel computing practical for language tasks. Because the model does not have to read text strictly word-by-word, many operations can run at the same time. That makes it a much better fit for modern GPU hardware. This efficiency helped open the door to today’s large models, including GPT-4 and Llama-3.
-        <br>
+        <br><br>
         For example, in the sentence “The trophy didn’t fit in the suitcase because it was too small,” the word “it” could refer to the trophy or the suitcase. A Transformer can use self-attention to compare “it” with the other words and figure out that “it” most likely refers to the suitcase. That ability to connect words across a sentence is one of the main reasons Transformers work so well.
     </p>
 
     <div class="math-box">
-        $$Attention(Q, K, V) = \text{softmax}\left( \frac{QK^T}{\sqrt{d_k}} \right)V$$
+        Attention(Q, K, V) = softmax((QK^T) / sqrt(d_k)) V
+        <br><br>
+        Q: Query matrix – represents what each token is “asking for” (e.g., “what is relevant to this word?”).<br>
+        K: Key matrix – represents what each token “exposes” for matching (similar to a searchable tag).<br>
+        V: Value matrix – holds the actual content or embedding to be returned when a token is attended to.<br>
+        d_k: Dimension of each key vector – used to scale the dot products so the softmax doesn’t explode.<br>
+        <br>
+        Example: <br>
+        In the sentence “Alice likes cooking, and she also enjoys hiking,” the word “she” is represented by a query Q. The keys K come from “Alice,” “likes,” “cooking,” “and,” “also,” “enjoys,” “hiking.” The dot product scores show that “Alice” is the most relevant key to “she,” so the model mostly uses the value V associated with “Alice” to form the output for “she.”
+        <br>
     </div>
 
     
