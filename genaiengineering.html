@@ -169,7 +169,7 @@
         
             <p style="line-height: 2;"> </p>
         
-            NVIDIA NVLink
+            <strong>NVIDIA NVLink</strong>
             <br>
             <br>
             NVIDIA NVLink is a proprietary, chip-to-chip interconnect protocol that provides a high-density, low-latency physical layer for GPU-to-GPU and GPU-to-CPU communication. 
@@ -182,7 +182,7 @@
             Consequently, it enables the efficient implementation of both model parallelism for neural networks that exceed single-GPU memory and large-scale data parallelism required by cutting-edge AI and HPC workloads.
         </p>
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA GPU Command Processor</strong>
     <br>
     <br>
@@ -193,7 +193,7 @@
 </p>
 
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA HBM3e Memory Controller</strong>
     <br>
     <br>
@@ -204,7 +204,7 @@
 </p>
 
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>141 GB HBM3e Memory</strong>
     <br>
     <br>
@@ -215,7 +215,7 @@
 </p>
 
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA L2 Cache Hierarchy</strong>
     <br>
     <br>
@@ -226,7 +226,7 @@
 </p>
 
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA L1 Cache and Shared Memory</strong>
     <br>
     <br>
@@ -236,7 +236,7 @@
     The primary function of this tier is to facilitate ultra-low latency data exchange and cooperative processing between threads in a thread block. Shared Memory is particularly critical for the "Attention" mechanism in Transformers, as it allows threads to share intermediate results of the $QK^T$ dot-product without hitting the slower L2 or HBM3e. Furthermore, the Hopper architecture introduces "Thread Block Clusters," which allow SMs to directly read/write to the shared memory of neighboring SMs over a dedicated high-speed network. This cross-SM communication bypasses global memory entirely, drastically accelerating the synchronization required for complex collective operations and ensuring that the H200 maintains peak efficiency during massive-scale inference.
 </p>
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA Register File</strong>
     <br>
     <br>
@@ -246,7 +246,7 @@
     The primary function of the Register File is to hold the "live" variables and immediate operands that the CUDA and Tensor Cores are currently processing. In the context of Large Language Model (LLM) inference, the Register File stores the specific vector elements and matrix fragments used in the Attention mechanism's dot-product calculations. By keeping these active values in registers rather than fetching them from Shared Memory or L2, the H200 minimizes "instruction-to-instruction" latency. Furthermore, Hopper’s advanced compiler technology optimizes "register pressure," ensuring that the maximum number of active warps can reside on the SM. This allows the H200 to effectively hide memory latency by instantly switching between threads that have their data ready in the Register File.
 </p>
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA Transformer Engine</strong>
     <br>
     <br>
@@ -256,7 +256,7 @@
     The primary function of the Transformer Engine is to solve the trade-off between speed and numerical stability. In traditional AI hardware, moving to lower precision often leads to "vanishing gradients" or rounding errors; however, the Transformer Engine uses sophisticated heuristics to scale and bias data dynamically. During the inference of models like GPT-4 or Llama-3, the engine identifies which parts of the attention mechanism require high precision (FP16) and which can be accelerated in FP8. This "mixed-precision" orchestration significantly reduces the memory footprint of activations and speeds up the "prefill" phase of inference. Consequently, the Transformer Engine allows the H200 to deliver significantly higher throughput and lower latency for the world’s most complex generative AI architectures.
 </p>
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA 4th-generation Tensor Cores</strong>
     <br>
     <br>
@@ -266,7 +266,7 @@
     The primary function of the 4th-generation Tensor Cores is to accelerate the "Generalized Matrix Multiplication" (GEMM) and fused attention operations that dominate Transformer architectures. During LLM inference, these cores handle the heavy computational load of the $QK^T$ and Softmax-Value multiplications. They are tightly integrated with the Transformer Engine, allowing them to switch seamlessly between FP8, FP16, and TF32 precisions based on the specific needs of the model layer. Additionally, these cores feature "Structured Sparsity" support, which can double throughput again by skipping unnecessary zero-value calculations in the weights. This specialized focus on matrix math allows the H200 to deliver the extreme efficiency needed to generate tokens in real-time for billions of simultaneous users.
 </p>
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA CUDA Cores</strong>
     <br>
     <br>
@@ -276,7 +276,7 @@
     The primary function of the CUDA Cores in an inference pipeline is to manage "everything else" beyond the core matrix multiplications. They are responsible for executing activation functions (like ReLU or GELU), layer normalization, Softmax calculations, and the complex indexing required for data rearrangement. In Large Language Model (LLM) workloads, CUDA Cores handle the critical orchestration of pointer arithmetic and memory management that ensures data is correctly formatted for the Tensor Cores. By providing this general-purpose compute layer, the H200 ensures that the entire end-to-end model execution remains on the GPU, eliminating the need to offload non-matrix tasks back to the CPU, which would otherwise create severe performance bottlenecks.
 </p>
         
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA Copy and DMA Engines</strong>
     <br>
     <br>
@@ -286,7 +286,7 @@
     The primary function of the Copy/DMA Engines is to eliminate data-movement bottlenecks that would otherwise stall the GPU’s execution units. During Large Language Model (LLM) inference, these engines manage the continuous streaming of multi-gigabyte weight matrices from memory into the cache hierarchy. They are particularly critical in "pipelined" execution, where they move activations between different stages of a model distributed across multiple H200s via NVLink. By handling the complexities of memory addressing and error checking in the background, the Copy Engines ensure that the data is always in the right place at the right time, allowing the H200 to achieve near-linear scaling in multi-GPU clusters and high-throughput batch processing environments.
 </p>
 
-<p style="line-height: 2;">
+<p style="line-height: 2;"> </p>
     <strong>NVIDIA NVLink Fabric</strong>
     <br>
     <br>
