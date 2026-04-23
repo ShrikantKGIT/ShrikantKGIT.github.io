@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vLLM Kernel-Level Memory Architecture & H200 Integration</title>
+    <title>vLLM Master Architecture: H200 Kernel Optimization</title>
     <style>
         :root {
             --tech-orange: #ff6d00;
@@ -14,6 +14,7 @@
             --text-secondary: #8b949e;
             --border-subtle: #30363d;
             --math-green: #4caf50;
+            --code-bg: #000000;
         }
         body {
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
@@ -29,9 +30,12 @@
             border-bottom: 2px solid var(--border-subtle);
             padding-bottom: 30px;
             margin-bottom: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
-        h1 { font-size: 2.4rem; color: #fff; margin: 0; }
-        .version-tag { color: var(--tech-orange); font-size: 0.9rem; font-weight: bold; }
+        h1 { font-size: 2.2rem; color: #fff; margin: 0; }
+        .version-tag { color: var(--tech-orange); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; }
 
         .layout { display: grid; grid-template-columns: 3fr 1fr; gap: 40px; }
         
@@ -39,182 +43,182 @@
             background: var(--panel-hex);
             border: 1px solid var(--border-subtle);
             border-radius: 4px;
-            padding: 35px;
+            padding: 40px;
             margin-bottom: 40px;
             position: relative;
         }
         .content-block::before {
-            content: "ENGINEERING_DATA_REF";
+            content: "SEC_DATA_CORE";
             position: absolute;
             top: -10px;
             left: 20px;
             background: var(--bg-deep);
             padding: 0 10px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--tech-blue);
         }
 
-        h2 { font-size: 1.6rem; color: var(--tech-blue); border-left: 4px solid var(--tech-orange); padding-left: 15px; margin-bottom: 25px; }
-        h3 { font-size: 1.2rem; color: #fff; margin-top: 30px; }
+        h2 { font-size: 1.5rem; color: var(--tech-blue); border-left: 5px solid var(--tech-orange); padding-left: 15px; margin-bottom: 25px; text-transform: uppercase; }
+        h3 { font-size: 1.1rem; color: #fff; margin-top: 35px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; }
 
         .math-engine {
-            background: #000;
+            background: var(--code-bg);
             padding: 25px;
             border-radius: 4px;
-            border: 1px dashed var(--tech-blue);
+            border-left: 4px solid var(--math-green);
             color: var(--math-green);
-            overflow-x: auto;
-            margin: 20px 0;
+            margin: 25px 0;
+            font-size: 0.9rem;
         }
 
         /* KV Block Visualizer */
-        .kv-block-diag {
+        .kv-grid-container {
             display: grid;
-            grid-template-columns: repeat(16, 1fr);
-            gap: 2px;
-            margin: 20px 0;
-            border: 1px solid #444;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin: 25px 0;
+            max-width: 500px;
         }
-        .token-slot { height: 25px; background: #21262d; border: 1px solid #30363d; position: relative; }
-        .token-slot.filled { background: var(--tech-blue); }
-        .token-slot.prefill { background: var(--tech-orange); }
+        .head-sq { aspect-ratio: 1; border-radius: 2px; position: relative; }
+        .head-sq::after { content: '128B'; font-size: 0.5rem; color: white; display: flex; justify-content: center; align-items: center; height: 100%; }
+        .k-head { background: #2e7d32; border: 1px solid var(--math-green); }
+        .v-head { background: #c62828; border: 1px solid #f44336; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 25px; }
-        th { text-align: left; border-bottom: 2px solid var(--border-subtle); padding: 12px; font-size: 0.8rem; color: var(--text-secondary); }
-        td { padding: 12px; border-bottom: 1px solid #21262d; font-size: 0.85rem; }
-
-        .sidebar-panel { background: #000; border: 1px solid var(--tech-orange); padding: 20px; border-radius: 4px; position: sticky; top: 20px; }
-        .stat-line { margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .sidebar-panel { background: #000; border: 1px solid var(--tech-orange); padding: 25px; border-radius: 4px; position: sticky; top: 20px; }
+        .stat-line { margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 8px; font-size: 0.85rem; }
         .stat-val { color: var(--tech-orange); float: right; font-weight: bold; }
 
-        .flow-diagram { border: 1px solid #444; padding: 20px; border-radius: 8px; background: #0a0a0a; margin: 20px 0; }
-        .flow-node { border: 1px solid var(--tech-blue); padding: 10px; margin: 10px 0; text-align: center; font-size: 0.8rem; }
+        .flow-step { border-left: 2px solid var(--tech-blue); padding-left: 20px; margin: 30px 0; }
+        .flow-step b { color: var(--nv-green); color: #fff; font-size: 1rem; display: block; margin-bottom: 10px; }
+
+        .highlight-card {
+            background: rgba(41, 121, 255, 0.05);
+            border: 1px solid var(--tech-blue);
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <header>
-        <div class="version-tag">SYSTEM_SPEC :: H200-SXM-141GB // vLLM_v2.4</div>
-        <h1>Autoregressive Inference & KV-Memory Management</h1>
+        <div>
+            <h1>Kernel Orchestration Blueprint</h1>
+            <p style="color: var(--text-secondary); margin-top: 10px;">H200 High-Throughput Autoregressive Inference & PagedAttention Optimization</p>
+        </div>
+        <div class="version-tag">Document Rev: 4.1.A</div>
     </header>
 
     <div class="layout">
         <main>
             <section class="content-block">
-                <h2>1. Tensor Dimensionality & Head Projection</h2>
-                <p>During the <strong>Autoregressive Inference Pipeline</strong>, each input token is projected into high-dimensional space. For a TinyLlama-style model using <strong>Grouped Query Attention (GQA)</strong>, the dimensions are calculated as discrete vectors stored in HBM3e.</p>
+                <h2>1. The Fundamental Problem: The KV Cache "Memory Tax"</h2>
+                <p>During autoregressive generation (predicting one token at a time), the model must look back at all previous tokens to understand context. Mathematically, the <b>Attention Mechanism</b> utilizes <b>Keys</b> (relevance identification) and <b>Values</b> (content information storage).</p>
                 
+                <div class="highlight-card">
+                    <b>Naive Implementation vs. Fragmentation:</b><br>
+                    In a standard setup, the model re-calculates Keys and Values for every preceding token at every step, which is computationally prohibitive. Developers solve this using a <b>KV Cache</b>, storing vectors in VRAM after the first calculation. 
+                    <br><br>
+                    <b>The Fragmentation Crisis:</b> Standard systems allocate a "maximum possible length" (e.g., 2048 tokens) per user. If a user writes a 10-token prompt, 99% of that memory is idle. This <i>Internal Fragmentation</i> is the primary reason standard GPUs fail to handle high concurrency.
+                </div>
                 
+            </section>
+
+            <section class="content-block">
+                <h2>2. The PagedAttention Revolution</h2>
+                <p>Inspired by Operating System virtual memory (paging), vLLM avoids forcing the GPU to find large, continuous "parking spaces" for sequences. Instead, it breaks the cache into atomic, fixed-size <b>Blocks</b>.</p>
+
+                <h3>Anatomy of a Block</h3>
+                <ul>
+                    <li><b>Token Capacity:</b> Atomic units holding data for exactly <b>16 tokens</b>.</li>
+                    <li><b>Model Dimensions:</b> For TinyLlama, each token utilizes <b>Grouped Query Attention (GQA)</b> with 4 Key heads and 4 Value heads. Each head has a dimension of <b>64</b>.</li>
+                    <li><b>The "Square" (128 Bytes):</b> At FP16 (2 bytes per number), one 64-dim head vector takes exactly <b>128 bytes</b>.</li>
+                    <li><b>Total Block Footprint:</b> 8 heads/token = 1,024 bytes (1KB). 16 tokens * 1KB = <b>16 KB per layer</b>.</li>
+                </ul>
+
+                <div class="kv-grid-container">
+                    <div class="head-sq k-head"></div><div class="head-sq k-head"></div><div class="head-sq k-head"></div><div class="head-sq k-head"></div>
+                    <div class="head-sq v-head"></div><div class="head-sq v-head"></div><div class="head-sq v-head"></div><div class="head-sq v-head"></div>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-secondary);">Above: Vector row for one token. 16 of these rows complete a physical Memory Block.</p>
+                
+            </section>
+
+            <section class="content-block">
+                <h2>3. Autoregressive Lifecycle: Prefill vs. Decoding</h2>
+                
+                <div class="flow-step">
+                    <b>Step 1: Arrival and Tokenization</b>
+                    <p>Prompt text is converted to Token IDs via CUDA cores. The system assigns the request to the <b>Waiting Queue</b>.</p>
+                </div>
+
+                <div class="flow-step">
+                    <b>Step 2: Prefilling (The Digestive Phase)</b>
+                    <p>The model processes the entire prompt at once to generate the initial KV cache. The scheduler checks the <b>Token Budget</b> (typically 2048). If under budget, the batch is processed in one iteration, and the first set of KV Blocks is pulled from the <b>Free Block Queue</b>.</p>
+                </div>
+
+                <div class="flow-step">
+                    <b>Step 3: Decoding (The Generation Loop)</b>
+                    <p>Once the first token is predicted, the request moves to the <b>Running Queue</b>. The model generates one token at a time, retrieving previous 16-token blocks from HBM3e and appending new data to the active block.</p>
+                </div>
+                
+            </section>
+
+            <section class="content-block">
+                <h2>4. Continuous Batching & The Page Table</h2>
+                <p>Traditional "Static Batching" wastes time waiting for the longest request in a batch to finish (the "Bus Analogy"). <b>Continuous Batching</b> acts at the iteration level, allowing new requests to "hop on" as soon as a block is freed.</p>
 
                 <div class="math-engine">
-                    // Dimensions for a single Token activation (per layer) <br>
-                    Query_Heads (Q) = 32 <br>
-                    Key_Heads (K)   = 4 <br>
-                    Value_Heads (V) = 4 <br>
-                    Head_Dim (d_h)  = 64 <br>
-                    Precision       = Float16 (2 Bytes) <br><br>
-                    Total_KV_Memory = (K + V) * d_h * Bytes = (4 + 4) * 64 * 2 = 1,024 Bytes (1.0 KB)
+                    // vLLM Logical Mapping via CPU Page Table <br>
+                    Sequence_A: [0-15] -> Phys_Addr: 0x7F4A (Block #500) <br>
+                    Sequence_A: [16-31] -> Phys_Addr: 0x1A2B (Block #12)
                 </div>
+
+                <p>This separation of the <b>Logical Map (CPU)</b> from the <b>Physical Data (GPU)</b> enables:</p>
+                <ul>
+                    <li><b>Prefix Caching:</b> Storing common system prompts once and sharing them across multiple users.</li>
+                    <li><b>Copy-on-Write:</b> Effortlessly branching conversations without duplicating initial memory blocks.</li>
+                </ul>
                 
-                <h3>Dimensional Placement (Concept Coordinates)</h3>
-                <p>The 64 numbers in each "Square" (Head) aren't arbitrary; they represent coordinates in a latent space learned during training. These dimensions capture linguistic features (e.g., Dimension 12: <i>Temporal Context</i>, Dimension 44: <i>Animate/Inanimate Binary</i>). During the <b>Token Processing Lifecycle</b>, these dimensions are fetched and compared via the Attention Kernel.</p>
             </section>
 
             <section class="content-block">
-                <h2>2. Kernel Orchestration: The PagedAttention V2 Logic</h2>
-                <p>vLLM's breakthrough is the abstraction of physical VRAM into logical blocks. This prevents <strong>Internal Fragmentation</strong> (wasted space within a sequence) and <strong>External Fragmentation</strong> (holes in VRAM memory map).</p>
-                
-                <div class="flow-diagram">
-                    <div class="flow-node">User Prompt Entry (Token ID Array)</div>
-                    <div style="text-align:center">↓</div>
-                    <div class="flow-node" style="border-color: var(--tech-orange)"><b>Prefill Stage:</b> Batch GEMM calculation across all prompt tokens</div>
-                    <div style="text-align:center">↓</div>
-                    <div class="flow-node"><b>Block Manager:</b> Allocates 16-slot Blocks in HBM3e</div>
-                    <div style="text-align:center">↓</div>
-                    <div class="flow-node" style="border-color: var(--tech-green)"><b>Decoding Stage:</b> Single-token Autoregressive Loop</div>
+                <h2>5. Computational Efficiency & Hardware Pools</h2>
+                <div class="math-engine">
+                    // Resource Pool Derivation <br>
+                    CUDA_BLOCK_POOL ≈ 32,000 (Primary VRAM KV Cache Pool) <br>
+                    CPU_BLOCK_POOL ≈ 11,915 (Swap Space in System RAM / 4GB)
                 </div>
 
-                
-
-                <h3>KV Block State Mapping</h3>
-                <div class="kv-block-diag">
-                    <div class="token-slot prefill"></div><div class="token-slot prefill"></div><div class="token-slot prefill"></div><div class="token-slot prefill"></div>
-                    <div class="token-slot prefill"></div><div class="token-slot prefill"></div><div class="token-slot filled"></div><div class="token-slot filled"></div>
-                    <div class="token-slot"></div><div class="token-slot"></div><div class="token-slot"></div><div class="token-slot"></div>
-                    <div class="token-slot"></div><div class="token-slot"></div><div class="token-slot"></div><div class="token-slot"></div>
-                </div>
-                <p><small>// BLOCK_ID: 0x8F22 // SLOTS_USED: 8/16 // STATUS: ACTIVE_RUNNING</small></p>
-            </section>
-
-            <section class="content-block">
-                <h2>3. Silicon Engagement Order (H200 Blueprint)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Hardware Subsystem</th>
-                            <th>Operation Category</th>
-                            <th>Metric / Throughput</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><b>L2 Cache (50MB)</b></td>
-                            <td>Weight Staging for MMA Kernels</td>
-                            <td>Sub-10ns Latency</td>
-                        </tr>
-                        <tr>
-                            <td><b>Tensor Cores (Gen 4)</b></td>
-                            <td>FP8 Matrix-Matrix Multiplication</td>
-                            <td>989 TFLOPS (dense)</td>
-                        </tr>
-                        <tr>
-                            <td><b>DMA Engines</b></td>
-                            <td>Asynchronous KV Block Swapping</td>
-                            <td>PCIe Gen5 / 128 GB/s</td>
-                        </tr>
-                        <tr>
-                            <td><b>CUDA Cores</b></td>
-                            <td>Softmax / Pointer Arithmetic / Sampling</td>
-                            <td>Scalar Flow Control</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                
+                <p>When VRAM occupancy reaches critical thresholds, the <b>Block Manager</b> initiates <b>Preemption</b>, swapping older blocks to CPU RAM to prevent system crashes. This fluidity allows a single H200 to perform the work that previously required an entire cluster, causing inference costs to plummet.</p>
             </section>
         </main>
 
         <aside>
             <div class="sidebar-panel">
-                <h3 style="margin-top:0; color: var(--tech-orange)">CORE_METRICS</h3>
+                <h3 style="margin-top:0; color: var(--tech-orange)">SYSTEM_CONSTRAINTS</h3>
                 <div class="stat-line">HBM3e Bandwidth <span class="stat-val">4.8 TB/s</span></div>
                 <div class="stat-line">Block Capacity <span class="stat-val">16 Tokens</span></div>
-                <div class="stat-line">Precision <span class="stat-val">FP8/FP16</span></div>
-                <div class="stat-line">Swap Space <span class="stat-val">4.0 GB</span></div>
-                <div class="stat-line">Head Dim <span class="stat-val">64-Dim</span></div>
-                
-                <h3 style="color: var(--tech-blue)">SCHEDULER_LOG</h3>
-                <p style="font-size: 0.7rem; color: #666;">
-                    [INFO] Continuous Batching enabled.<br>
-                    [INFO] Decoding prioritized over Prefill.<br>
-                    [WARN] VRAM Pressure > 85%... Initiating Block Preemption.
+                <div class="stat-line">Head Dim (d_h) <span class="stat-val">64</span></div>
+                <div class="stat-line">Precision <span class="stat-val">FP16</span></div>
+                <div class="stat-line">VRAM KV Pool <span class="stat-val">10.86 GB</span></div>
+                <div class="stat-line">CPU Swap <span class="stat-val">4.0 GB</span></div>
+
+                <h3 style="color: var(--tech-blue); margin-top: 40px;">STATUS_MONITOR</h3>
+                <p style="font-size: 0.7rem; color: var(--text-secondary);">
+                    [OK] PagedAttention Kernel v2 Active<br>
+                    [OK] Continuous Batching Engaged<br>
+                    [OK] GQA Heads: 4:1 Ratio Detect<br>
+                    [WARN] Sequence Length > 32k... Monitoring Preemption
                 </p>
             </div>
         </aside>
     </div>
 
-    <section class="content-block">
-        <h2>4. Warp-Level Optimization & Memory Striding</h2>
-        <p>In the <strong>Autoregressive Inference Pipeline</strong>, a single GPU Warp (32 threads) processes the attention heads. To achieve maximum throughput on H200's HBM3e, memory access must be <b>Coalesced</b>.</p>
-        
-        
-
-        <p>By arranging the 64 dimensions into 128-byte segments, vLLM ensures that a warp can read multiple head vectors in a single memory transaction. This reduces the number of "Instruction Stalls" and keeps the Tensor Cores saturated at peak performance.</p>
-    </section>
-
     <footer>
-        <p>NVIDIA SXM H200 // MASTER_ARCHITECTURE_REF // 2026</p>
+        <p>NVIDIA SXM H200 // MASTER ARCHITECTURE REFERENCE // MASTERED 2026</p>
     </footer>
 </div>
 
