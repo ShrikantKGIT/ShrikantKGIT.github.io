@@ -252,27 +252,27 @@
 
     <div class="flow-step">
         <b>1. Tokenization (The Translator)</b>
-        <p><b>Example:</b> You type "Describe the H200." The software (vLLM) uses a detokenizer on <b>CUDA Cores</b> to turn this into IDs [154, 892, 44]. The <b>HBM3e</b> fetches the corresponding vector embeddings.</p>
+        <p><b>Example:</b> You type "Describe the H200." The software (vLLM) uses a detokenizer on CUDA Cores to turn this into IDs [154, 892, 44]. The HBM3e fetches the corresponding vector embeddings.</p>
     </div>
 
     <div class="flow-step">
         <b>2. Prefill (Understanding the Context)</b>
-        <p><b>Example:</b> The <b>Transformer Engine</b> casts the embeddings to <b>FP8</b>. The <b>Tensor Cores</b> run the $QK^T$ math for all 4 words at once. The GPU calculates that "H200" is the subject and "Describe" is the intent.</p>
+        <p><b>Example:</b> The Transformer Engine casts the embeddings to FP8. The Tensor Cores run the QK^T math for all 4 words at once. The GPU calculates that "H200" is the subject and "Describe" is the intent.</p>
     </div>
 
     <div class="flow-step">
         <b>3. KV Cache Creation (Memory Storage)</b>
-        <p><b>Example:</b> The "meaning" of your prompt is saved. vLLM's <b>Block Manager</b> allocates physical pages in <b>HBM3e</b> to store the Keys and Values for those 4 tokens so they aren't recalculated for the next word.</p>
+        <p><b>Example:</b> The "meaning" of your prompt is saved. vLLM's Block Manager allocates physical pages in HBM3e to store the Keys and Values for those 4 tokens so they aren't recalculated for the next word.</p>
     </div>
 
     <div class="flow-step">
         <b>4. Decode (The Generation Loop)</b>
-        <p><b>Example:</b> The AI predicts the first word: "The." To do this, <b>HBM3e</b> streams 70B parameters through the <b>L2 Cache</b> at 4.8 TB/s. The <b>Tensor Cores</b> pick the most likely next word.</p>
+        <p><b>Example:</b> The AI predicts the first word: "The." To do this, HBM3e streams 70B parameters through the L2 Cache at 4.8 TB/s. The Tensor Cores pick the most likely next word.</p>
     </div>
 
     <div class="flow-step">
         <b>5. Streaming Output</b>
-        <p><b>Example:</b> The word "The" is converted back from ID [467] to text. The <b>NVLink</b> fabric moves this token to the <b>ConnectX NIC</b>, and it appears on your screen instantly.</p>
+        <p><b>Example:</b> The word "The" is converted back from ID [467] to text. The NVLink fabric moves this token to the ConnectX NIC, and it appears on your screen instantly.</p>
     </div>
 
     <h2>4. Scaling: Parallelism & Large-Scale Document Parsing</h2>
