@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vLLM & H200: The Block-Level Architecture Reference</title>
+    <style>
+        :root {
+            --nv-green: #76b900;
+            --nv-dark: #1a1a1a;
+            --nv-slate: #363050;
+            --bg-light: #f9f9f9;
+            --border-color: #eee;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fff;
+        }
+        h1 { font-size: 2.5rem; color: var(--nv-dark); border-bottom: 4px solid var(--nv-green); display: inline-block; margin-bottom: 20px; }
+        h2 { font-size: 1.8rem; color: var(--nv-slate); margin-top: 50px; border-left: 10px solid var(--nv-green); padding-left: 15px; background: var(--bg-light); padding: 10px 15px; }
+        h3 { font-size: 1.4rem; color: var(--nv-dark); margin-top: 35px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+        
+        .section-intro { font-size: 1.1rem; color: #555; margin-bottom: 25px; }
+        
+        .analogy-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .analogy-card strong { color: var(--nv-green); font-family: monospace; font-size: 1.1rem; display: block; margin-bottom: 10px; }
+
+        .math-box {
+            background: var(--nv-dark);
+            color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 1.1rem;
+            margin: 30px 0;
+        }
+
+        .visual-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            max-width: 400px;
+            margin: 20px 0;
+        }
+        .grid-square { aspect-ratio: 1; border-radius: 2px; }
+        .key-sq { background: #4caf50; border: 1px solid #2e7d32; }
+        .val-sq { background: #f44336; border: 1px solid #c62828; }
+
+        table { width: 100%; border-collapse: collapse; margin: 30px 0; font-size: 0.95rem; }
+        th { background: var(--nv-slate); color: white; padding: 15px; text-align: left; }
+        td { padding: 15px; border: 1px solid var(--border-color); vertical-align: top; }
+        tr:nth-child(even) { background: #fcfcfc; }
+
+        .flow-step { border-left: 3px solid var(--nv-green); padding-left: 20px; margin-bottom: 30px; }
+        .flow-step b { color: var(--nv-green); font-size: 1.1rem; display: block; }
+
+        footer { text-align: center; margin-top: 80px; padding: 40px; color: #888; border-top: 1px solid var(--border-color); }
+    </style>
+</head>
+<body>
+
+    <h1>vLLM & TinyLlama: Memory Architecture Reference</h1>
+    
+    <h3>The Autoregressive Inference Pipeline through HBM3e VRAM</h3>
+    <p class="section-intro">
+        In high-performance inference, the bottleneck isn't the raw FLOPs of the GPU; it is the management of the <b>KV Cache</b>. vLLM solves this using PagedAttention, breaking memory into 16-token Blocks to eliminate fragmentation during the <b>Token Processing Lifecycle</b>.
+    </p>
+
+    <div class="math-box">
+        // Memory Footprint Calculation (TinyLlama Example) <br>
+        Head Dimension (d_h): 64 <br>
+        Precision (FP16): 2 bytes/param <br>
+        Memory per Head: 64 * 2 = 128 bytes <br>
+        Memory per Token (8 Heads): 8 * 128 = 1,024 bytes (1 KB) <br>
+        Total Block Memory (16 Tokens): 16 * 1 KB = 16 KB / Layer
+    </div>
+
+    <h2>1. The Visual Unit: The KV Block</h2>
+    <p>Each block in vLLM is a fixed-size memory structure holding Key and Value tensors. In a Grouped Query Attention (GQA) model like TinyLlama, each token row contains 8 specialized squares, allocated dynamically during the <b>Autoregressive Inference Pipeline</b>.</p>
+    
+    <div class="analogy-card">
+        <strong>The "Square" Analogy</strong><br>
+        Think of each 128-byte square as a 64-dimensional coordinate in concept space. 4 "Key" squares tell the model <i>where</i> to look (geographic tags), while 4 "Value" squares hold the <i>content</i> (the actual payload).
+    </div>
+
+    <div class="visual-grid">
+        <div class="grid-square key-sq" title="Key Head 1"></div>
+        <div class="grid-square key-sq" title="Key Head 2"></div>
+        <div class="grid-square key-sq" title="Key Head 3"></div>
+        <div class="grid-square key-sq" title="Key Head 4"></div>
+        <div class="grid-square val-sq" title="Value Head 1"></div>
+        <div class="grid-square val-sq" title="Value Head 2"></div>
+        <div class="grid-square val-sq" title="Value Head 3"></div>
+        <div class="grid-square val-sq" title="Value Head 4"></div>
+    </div>
+    <p><small><i>Above: Representation of one token's KV data across 8 attention heads in the KV cache.</i></small></p>
+
+    <h2>2. Architectural Workflow: Prefill to Decode</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Phase</th>
+                <th>Logic (CUDA Cores)</th>
+                <th>Memory Movement (HBM3e)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Prefill Stage</b></td>
+                <td>Processes initial input tensor; generates first KV cache activation.</td>
+                <td>Allocates first <b>Block</b> from Free Queue. Writes 128-byte head vectors to VRAM.</td>
+            </tr>
+            <tr>
+                <td><b>Decoding Stage</b></td>
+                <td>Autoregressive loop; predicts next token via high-bandwidth weight streaming.</td>
+                <td>Fetches previous blocks via <b>Page Table</b>; appends new KV row to current block.</td>
+            </tr>
+            <tr>
+                <td><b>Cache Eviction</b></td>
+                <td>Monitors VRAM pressure via Block Manager during long-context generation.</td>
+                <td>Swaps KV Blocks from GPU HBM to CPU RAM (4GB Swap Space) to avoid OOM.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. The vLLM Control Plane & Token Processing Lifecycle</h2>
+    <div class="flow-step">
+        <b>1. The Page Table (CPU Map)</b>
+        <p>The CPU tracks the <b>Autoregressive Inference Pipeline</b>. It maps logical sequences to Physical Block #500 and Physical Block #12. This maps virtual tensor indices to physical HBM3e addresses.</p>
+    </div>
+
+    <div class="flow-step">
+        <b>2. Continuous Batching (Throughput)</b>
+        <p>Instead of static sync, vLLM allows a request to exit the <b>Token Processing Lifecycle</b> the moment it hits a &lt;STOP&gt; token. The associated Blocks are recycled into the <b>Free Block Queue</b> for concurrent sessions.</p>
+    </div>
+
+    <div class="flow-step">
+        <b>3. Layer-Wise Paging</b>
+        <p>In a 22-layer model, each layer maintains independent block pointers. The vLLM scheduler ensures that during each step of the <b>Autoregressive Inference Pipeline</b>, HBM3e streams the specific blocks for that layer to the Tensor Cores.</p>
+    </div>
+
+    <h2>4. Summary of Memory Logic</h2>
+    <div style="background: #f0f0f0; padding: 25px; border-radius: 8px;">
+        <ul>
+            <li><b>Total CUDA Blocks:</b> Based on available VRAM (e.g., ~32,000 blocks for 10.86 GB).</li>
+            <li><b>Grouped Query Attention:</b> 32 Query heads share 4 Key/Value heads for efficient <b>Autoregressive Inference</b>.</li>
+            <li><b>Dimension Placement:</b> 64 numbers per head represent conceptual traits learned during pre-training.</li>
+            <li><b>The H200 Advantage:</b> 141GB of HBM3e increases the block pool for the <b>Token Processing Lifecycle</b>, supporting massive concurrency.</li>
+        </ul>
+    </div>
+
+    <footer>
+        <p>Technical Reference • vLLM PagedAttention Blueprint • 2026</p>
+    </footer>
+
+</body>
+</html>
