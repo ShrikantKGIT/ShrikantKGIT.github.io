@@ -3,316 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technical Blueprint: vLLM Kernel Memory & H200 Hardware Orchestration (ENHANCED)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-OSS-20B Memory & Throughput Blueprint</title>
     <style>
         :root {
-            --nv-green: #76b900;
-            --nv-dark: #050505;
-            --nv-slate: #1a1b26;
-            --tech-blue: #2979ff;
-            --tech-orange: #ff6d00;
-            --math-green: #4caf50;
-            --text-primary: #e0e0e0;
-            --border-color: #333;
+            --bg: #ffffff;
+            --panel: #f7f8fa;
+            --panel-2: #ffffff;
+            --text: #111827;
+            --muted: #4b5563;
+            --border: #d1d5db;
+            --accent: #2563eb;
+            --accent-2: #059669;
+            --warn: #b45309;
+            --danger: #b91c1c;
+            --code-bg: #0b1020;
+            --code-text: #d1fae5;
         }
+        * { box-sizing: border-box; }
         body {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            line-height: 1.8;
-            color: var(--text-primary);
-            background-color: var(--nv-dark);
             margin: 0;
-            padding: 50px 20px;
+            padding: 32px 18px 60px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.7;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
-        
+        .container {
+            max-width: 1320px;
+            margin: 0 auto;
+        }
         header {
-            border-bottom: 3px solid var(--nv-green);
-            padding-bottom: 30px;
-            margin-bottom: 60px;
-            text-align: center;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 18px;
+            margin-bottom: 28px;
         }
-        h1 { font-size: 2.8rem; color: #fff; margin: 0; letter-spacing: -1px; }
-        .sub-header { color: var(--nv-green); font-size: 1rem; margin-top: 15px; font-weight: bold; }
-
-        .layout-grid { display: grid; grid-template-columns: 3fr 1fr; gap: 50px; }
-        
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            letter-spacing: -0.03em;
+        }
+        .sub {
+            color: var(--muted);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
         section {
-            background: var(--nv-slate);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 40px;
-            margin-bottom: 40px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 26px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
         }
-        section::after {
-            content: "ENHANCED_v2.0";
-            position: absolute;
-            bottom: 10px;
-            right: 20px;
-            font-size: 0.7rem;
-            color: var(--tech-orange);
+        h2 {
+            margin: 0 0 14px;
+            font-size: 1.45rem;
+            color: var(--accent);
         }
-
-        h2 { font-size: 1.7rem; color: var(--tech-blue); margin-top: 0; border-left: 6px solid var(--tech-orange); padding-left: 20px; text-transform: uppercase; }
-        h3 { font-size: 1.3rem; color: #fff; margin-top: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        h4 { font-size: 1.1rem; color: var(--nv-green); margin-top: 25px; }
-
-        .code-block {
-            background: #000;
-            padding: 25px;
-            border-radius: 6px;
-            color: var(--math-green);
+        h3 {
+            margin: 26px 0 12px;
+            font-size: 1.1rem;
+            color: #111827;
+        }
+        p { margin: 12px 0; }
+        ul { margin: 10px 0 0 22px; }
+        li { margin: 8px 0; }
+        .callout {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 16px 18px;
+            border-radius: 10px;
+            margin: 18px 0;
+        }
+        .callout strong { color: var(--accent); }
+        .warn {
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+        }
+        .ok {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+        .code {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 18px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin: 16px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
             font-size: 0.95rem;
-            margin: 25px 0;
-            border-left: 4px solid var(--math-green);
+        }
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: 700;
+        }
+        .metrics {
+            position: sticky;
+            top: 18px;
+        }
+        .metric-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 10px 0;
+            font-size: 0.92rem;
+        }
+        .metric-row:last-child { border-bottom: 0; }
+        .metric-val {
+            color: var(--accent);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .formula {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin: 12px 0;
             overflow-x: auto;
         }
-
-        /* KV Block Grid */
-        .block-viz {
+        .tiny {
+            font-size: 0.88rem;
+            color: var(--muted);
+        }
+        .footer {
+            color: var(--muted);
+            text-align: center;
+            margin-top: 18px;
+            font-size: 0.9rem;
+        }
+        .block-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             gap: 8px;
-            margin: 30px 0;
-            max-width: 700px;
+            margin: 18px 0;
         }
-        .head-cell { 
-            aspect-ratio: 1; 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 0.65rem; 
-            color: #fff; 
-            border: 1px solid #444;
+        .cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border: 1px solid;
         }
-        .k-cell { background: linear-gradient(135deg, #1b5e20, #2e7d32); }
-        .v-cell { background: linear-gradient(135deg, #b71c1c, #d32f2f); }
-
-        .sidebar { position: sticky; top: 40px; height: fit-content; }
-        .metric-card { background: #000; border: 1px solid var(--tech-blue); padding: 30px; border-radius: 6px; margin-bottom: 20px; }
-        .metric-row { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 8px; font-size: 0.85rem; }
-        .metric-val { color: var(--tech-orange); font-weight: bold; font-family: monospace; }
-
-        .flow-node { 
-            border-left: 4px solid var(--tech-blue); 
-            padding-left: 25px; 
-            margin: 35px 0; 
-            background: rgba(41,121,255,0.05);
-            padding: 20px;
-            border-radius: 4px;
-        }
-        .flow-node b { display: block; font-size: 1.2rem; margin-bottom: 12px; color: #fff; }
-
-        .alert-box {
-            background: rgba(255, 109, 0, 0.1);
-            border: 1px solid var(--tech-orange);
-            padding: 25px;
-            border-radius: 6px;
-            margin: 30px 0;
-            font-size: 0.95rem;
-        }
-
-        .example-box {
-            background: rgba(76,175,80,0.1);
-            border: 1px solid var(--math-green);
-            padding: 20px;
-            border-radius: 6px;
-            margin: 25px 0;
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin: 25px 0; 
-            font-size: 0.9rem;
-        }
-        th, td { 
-            padding: 12px; 
-            text-align: left; 
-            border-bottom: 1px solid #444; 
-        }
-        th { background: #111; color: var(--tech-blue); }
-        tr:hover { background: rgba(255,255,255,0.05); }
-
-        footer { 
-            text-align: center; 
-            border-top: 1px solid var(--border-color); 
-            padding: 50px; 
-            color: #888; 
-            font-size: 0.85rem; 
-        }
-
-        .math-eq { 
-            background: #111; 
-            padding: 15px; 
-            border-radius: 4px; 
-            font-size: 1rem; 
-            margin: 20px 0; 
-            border-left: 4px solid var(--math-green);
+        .k { background: #dcfce7; border-color: #86efac; color: #166534; }
+        .v { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+        .example {
+            border-left: 4px solid var(--accent-2);
+            background: #f0fdf4;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin: 14px 0;
         }
     </style>
 </head>
 <body>
-
 <div class="container">
     <header>
-        <h1>vLLM PagedAttention Masterclass</h1>
-        <div class="sub-header">PROD_SPEC // NVIDIA_H200_SXM // ENHANCED_2026 // 32K_BLOCK_POOL</div>
+        <h1>GPT-OSS-20B Memory & Throughput Blueprint</h1>
+        <div class="sub">White-background technical explainer focused on model size, KV cache, and throughput</div>
     </header>
 
-    <div class="layout-grid">
+    <div class="grid">
         <main>
             <section>
-                <h2>1. KV Cache: The Memory Tax Crisis</h2>
-                <p>Autoregressive inference demands <b>contextual memory</b> for every token. The Attention mechanism requires <b>Keys</b> (query matching) and <b>Values</b> (content storage) for all prior tokens.</p>
-                
-                <div class="alert-box">
-                    <strong>Fragmentation Catastrophe:</strong><br>
-                    Naive engines pre-allocate <b>max_seq_len</b> (e.g., 2048 tokens) per user. A 10-token prompt wastes <b>99.5% VRAM</b>. On H200's 141GB, this limits to ~5-8 concurrent users.[web:2][web:9]
-                </div>
+                <h2>1. What GPT-OSS-20B Is</h2>
+                <p>gpt-oss-20b is described as a medium-sized open-weight model for low-latency, local, or specialized use cases, with 21B total parameters and 3.6B active parameters. It also has a long context window of 128k tokens, with some references using 131,072 tokens as the precise value. [web:14][web:11]</p>
+                <p>This combination matters because the model size determines how hard it is to fit weights in GPU memory, while the context length determines how much KV cache memory you may need during inference. [web:12][web:11]</p>
 
-                <div class="math-eq">
-                    <code>Attention(Q,K,V) = softmax(QK<sup>T</sup>/√d)V</code><br>
-                    <small>// KV Cache avoids recomputing K,V → O(n²) explosion → but eats VRAM</small>
-                </div>
-
-                <div class="example-box">
-                    <h4>Llama3.1-70B Example:</h4>
-                    <p>80 layers × 8 KV heads × 128 dim × 8192 seq × batch=32 × FP16 = <b>80GB KV cache</b>. Without paging: OOM city.[code_file:1]
+                <div class="callout">
+                    <strong>Design takeaway:</strong> the weights are only part of the memory story. For long prompts, KV cache can become the dominant memory consumer even when the model weights fit comfortably. [web:12][web:4]
                 </div>
             </section>
 
             <section>
-                <h2>2. PagedAttention: OS-Inspired Revolution</h2>
-                <p>vLLM breaks KV cache into fixed <b>16-token Blocks</b>, enabling non-contiguous allocation like OS virtual memory.[web:6]</p>
-
-                <h3>Block Anatomy (TinyLlama GQA)</h3>
-                <ul>
-                    <li><b>Capacity:</b> 16 tokens/block</li>
-                    <li><b>Per token:</b> 4K heads + 4V heads × 64 dim × FP16 (2B) = 1,024B</li>
-                    <li><b>Block size:</b> 16 × 1,024B = <b>16KB per layer</b>[code_file:1]</li>
-                </ul>
-
-                <div class="block-viz">
-                    <div class="head-cell k-cell">K<sub>h0</sub></div><div class="head-cell k-cell">K<sub>h1</sub></div><div class="head-cell k-cell">K<sub>h2</sub></div><div class="head-cell k-cell">K<sub>h3</sub></div>
-                    <div class="head-cell v-cell">V<sub>h0</sub></div><div class="head-cell v-cell">V<sub>h1</sub></div><div class="head-cell v-cell">V<sub>h2</sub></div><div class="head-cell v-cell">V<sub>h3</sub></div>
-                </div>
-                <p><small>// Single token's 8 heads (4K+4V). ×16 rows = 1 Block. Repeat per layer.</small></p>
-
+                <h2>2. Weight Memory Calculation</h2>
+                <p>The simplest estimate is:</p>
+                <div class="formula">weight_memory = parameter_count × bytes_per_parameter</div>
+                <p>Using 21B total parameters, the raw weight sizes are:</p>
                 <table>
-                    <tr><th>Model</th><th>KV Heads</th><th>Head Dim</th><th>Block/Layer</th></tr>
-                    <tr><td>TinyLlama (1.1B)</td><td>4K+4V</td><td>64</td><td>16 KB</td></tr>
-                    <tr><td>Llama3.1-70B</td><td>8K+2V (GQA)</td><td>128</td><td>64 KB</td></tr>
-                    <tr><td>Mistral-7B</td><td>8K+8V</td><td>128</td><td>128 KB</td></tr>
-                </table>
-            </section>
-
-            <section>
-                <h2>3. Lifecycle: Prefill → Decode</h2>
-                
-                <div class="flow-node">
-                    <b>① Arrival/Tokenization</b>
-                    <p>Text → Token IDs. Waiting Queue until Block Manager confirms availability.</p>
-                </div>
-
-                <div class="flow-node">
-                    <b>② Prefill Phase</b>
-                    <p>Parallel GEMM computes initial KV for entire prompt. Allocates blocks from <code>FreeBlockQueue</code>. Token budget: typically 2048.[web:7]
-                </div>
-
-                <div class="flow-node">
-                    <b>③ Decode Loop</b>
-                    <p>Running Queue. Predict 1 token → fetch KV blocks → append new row. Continuous batching swaps finishers instantly.
-                </div>
-
-                <div class="code-block">
-# Example: Block allocation trace<br>
-prompt="The quick brown fox" # 5 tokens → Block #500 (slots 0-15)<br>
-decode_step_1 → append to #500 (slot 5)<br>
-decode_step_20 → allocate #501 (slots 16-31)<br>
-EOS → recycle #500,501 → FreeQueue
-                </div>
-            </section>
-
-            <section>
-                <h2>4. Continuous Batching + Prefix Caching</h2>
-                <p>Static batching = bus waits for slowest passenger. vLLM batches at <b>iteration level</b>.[web:3][web:8]</p>
-
-                <div class="code-block">
-# CPU Page Table Mapping<br>
-UserA[0:16] → PhysBlock#500 (0x7A4F)<br>
-UserA[16:32] → PhysBlock#12 (0x1B2C)<br>
-UserB[0:16] → PhysBlock#500 (SHARED PREFIX!)
-                </div>
-
-                <div class="example-box">
-                    <h4>Real-World: RAG Pipeline</h4>
-                    <p>100 users query same 50-page PDF → <b>1x KV storage</b> for prefix. Each branches uniquely post-prompt. Saves <b>90%+ VRAM</b>.[web:3][web:8]
-                </div>
-            </section>
-
-            <section>
-                <h2>5. H200 Memory Pools & Preemption</h2>
-                
-                <div class="code-block" style="border-left-color: var(--tech-orange);">
-# H200 Production Config (2026)[web:7][web:10]<br>
-HBM3e: 141GB @ 4.8TB/s<br>
-KV_POOL: ~12.7GB (831K blocks @16KB)[code_file:1]<br>
-CPU_SWAP_POOL: 4GB (~250K blocks)<br>
-UTIL: 88% → Preempt LRU blocks via DMA
-                </div>
-
-                <table>
-                    <tr><th>Pool</th><th>Capacity</th><th>Purpose</th></tr>
-                    <tr><td>Primary (VRAM)</td><td>831,651 blocks</td><td>Hot KV cache</td></tr>
-                    <tr><td>Swap (CPU RAM)</td><td>~250,000 blocks</td><td>Cold eviction</td></tr>
+                    <tr>
+                        <th>Precision</th>
+                        <th>Bytes per parameter</th>
+                        <th>Raw weight memory</th>
+                    </tr>
+                    <tr>
+                        <td>FP16</td>
+                        <td>2</td>
+                        <td>42.0 GB</td>
+                    </tr>
+                    <tr>
+                        <td>INT8</td>
+                        <td>1</td>
+                        <td>21.0 GB</td>
+                    </tr>
+                    <tr>
+                        <td>INT4</td>
+                        <td>0.5</td>
+                        <td>10.5 GB</td>
+                    </tr>
                 </table>
 
-                <p>One H200 replaces 8x A100 clusters for Llama3-70B serving.[web:5][web:7]</p>
+                <div class="example">
+                    <strong>Example:</strong> if you run the model in 4-bit form, the raw weights can be around 10.5 GB before runtime overhead. That is why the model is described as fitting in roughly 16 GB of VRAM with optimized quantization and runtime tricks. [web:12][web:11]
+                </div>
+                <p>Because gpt-oss-20b also has only 3.6B active parameters, the effective compute footprint can be much lower than the raw 21B-parameter count suggests. [web:14]</p>
             </section>
 
             <section>
-                <h2>6. Production Metrics & Scale</h2>
-                <div class="alert-box">
-                    <strong>Throughput Gains:</strong> 2-4x latency reduction via prefix bucketing + continuous batching. Single H200: 1k+ req/min @ 8k ctx.[web:3][web:7]
-                </div>
+                <h2>3. KV Cache Calculation</h2>
+                <p>KV cache memory scales with layers, KV heads, head dimension, context length, and precision. A compact formula is:</p>
+                <div class="formula">KV bytes per token = effective_layers × 2 × kv_heads × head_dim × bytes_per_element</div>
+                <p>For the model details commonly cited for gpt-oss-style architectures, a useful estimate is 8 KV heads, 64 head dimension, FP16 storage, and 18 effective layers if half of 36 layers are treated as sliding-window layers. That gives:</p>
+                <div class="formula">per_token_KV = 18 × 2 × 8 × 64 × 2 bytes = 36,864 bytes ≈ 36 KB/token</div>
 
                 <table>
-                    <tr><th>Config</th><th>Users @ 2k ctx</th><th>Users @ 8k ctx</th></tr>
-                    <tr><td>Naive PyTorch</td><td>~8</td><td>~2</td></tr>
-                    <tr><td>vLLM Paged</td><td>~450</td><td>~120</td></tr>
+                    <tr>
+                        <th>Context length</th>
+                        <th>Approx KV memory</th>
+                    </tr>
+                    <tr>
+                        <td>4,096 tokens</td>
+                        <td>~0.14 GB</td>
+                    </tr>
+                    <tr>
+                        <td>32,768 tokens</td>
+                        <td>~1.13 GB</td>
+                    </tr>
+                    <tr>
+                        <td>131,072 tokens</td>
+                        <td>~4.5 GB</td>
+                    </tr>
                 </table>
+
+                <div class="callout warn">
+                    <strong>Important:</strong> these are prompt-length-only estimates. Real serving also needs room for activations, allocator overhead, workspace buffers, and fragmentation. Long-context plus high concurrency can make KV cache much larger than the weight footprint. [web:12][web:4]
+                </div>
+            </section>
+
+            <section>
+                <h2>4. Why vLLM Helps</h2>
+                <p>vLLM reduces memory waste by storing KV cache in fixed-size blocks rather than reserving one giant contiguous region per request. That lets the engine pack many sequences into fragmented GPU memory more efficiently. [web:6][web:3]</p>
+
+                <h3>Block model</h3>
+                <p>A practical block example is 16 tokens per block. If each token uses about 36 KB of KV cache in the estimate above, then one 16-token block can represent roughly:</p>
+                <div class="formula">16 × 36 KB ≈ 576 KB per block</div>
+                <p>This makes the allocation unit explicit and makes it easier to recycle memory as requests finish. [web:6][web:8]</p>
+
+                <div class="block-grid">
+                    <div class="cell k">K1</div><div class="cell k">K2</div><div class="cell k">K3</div><div class="cell k">K4</div>
+                    <div class="cell v">V1</div><div class="cell v">V2</div><div class="cell v">V3</div><div class="cell v">V4</div>
+                </div>
+                <p class="tiny">Illustrative token-level KV structure. In practice, the exact count of KV heads and the effective cache size depend on the architecture and attention pattern. [web:17][web:14]</p>
+            </section>
+
+            <section>
+                <h2>5. Throughput Expectations</h2>
+                <p>Throughput depends on prompt length, output length, batching, cache reuse, and whether you are compute-bound or memory-bound. Reported numbers for gpt-oss-20b include around 263 tokens/s in one benchmark and much higher aggregate throughput under concurrency on dedicated hardware. [web:13][web:18][web:15]</p>
+
+                <table>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Interpretation</th>
+                        <th>Example throughput</th>
+                    </tr>
+                    <tr>
+                        <td>Single-stream interactive use</td>
+                        <td>Latency-sensitive, small batch</td>
+                        <td>~250 to 300 tokens/s</td>
+                    </tr>
+                    <tr>
+                        <td>Moderate batching</td>
+                        <td>Mixed workload with several active requests</td>
+                        <td>~2,000 tokens/s aggregate</td>
+                    </tr>
+                    <tr>
+                        <td>High concurrency</td>
+                        <td>Many requests, strong scheduling and cache reuse</td>
+                        <td>~18,000 tokens/s aggregate</td>
+                    </tr>
+                </table>
+
+                <div class="example">
+                    <strong>Example:</strong> if the system serves 64 concurrent requests and each averages 280 generated tokens, the cluster-level throughput can be very high even when each individual request feels conversational. That is the core benefit of continuous batching and paged KV management. [web:18][web:8]
+                </div>
+            </section>
+
+            <section>
+                <h2>6. Concrete Serving Math</h2>
+                <p>Here is a simple way to think about memory headroom on a 141 GB H200. If weights take about 10.5 GB at 4-bit and KV cache for a long 128k request takes about 4.5 GB, then the remaining memory must cover runtime overhead and concurrency. [web:12][web:11]</p>
+
+                <div class="code">
+# Rough serving budget example
+GPU VRAM: 141 GB
+Weights (INT4): ~10.5 GB
+KV cache for 128k prompt: ~4.5 GB
+Overhead + workspace + fragmentation: depends on engine
+Effective headroom: still large enough for multi-request serving
+                </div>
+
+                <p>A key observation is that long prompts do not automatically imply low concurrency. If many requests share a prefix, prefix caching can save significant memory and increase throughput further. [web:8][web:3]</p>
+            </section>
+
+            <section>
+                <h2>7. Summary Numbers</h2>
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Estimate</th>
+                    </tr>
+                    <tr>
+                        <td>Total parameters</td>
+                        <td>21B</td>
+                    </tr>
+                    <tr>
+                        <td>Active parameters</td>
+                        <td>3.6B</td>
+                    </tr>
+                    <tr>
+                        <td>FP16 weights</td>
+                        <td>42.0 GB</td>
+                    </tr>
+                    <tr>
+                        <td>INT4 weights</td>
+                        <td>10.5 GB</td>
+                    </tr>
+                    <tr>
+                        <td>KV per token</td>
+                        <td>~36 KB</td>
+                    </tr>
+                    <tr>
+                        <td>KV at 128k context</td>
+                        <td>~4.5 GB</td>
+                    </tr>
+                    <tr>
+                        <td>Observed throughput range</td>
+                        <td>~250 to 18,000 tokens/s depending on batching</td>
+                    </tr>
+                </table>
+                <p class="tiny">These are engineering estimates and benchmark-informed ranges, not guaranteed production numbers. Actual performance changes with quantization, kernel choice, batching, prompt length, and hardware. [web:12][web:13][web:18]</p>
             </section>
         </main>
 
-        <aside class="sidebar">
+        <aside class="metrics">
             <div class="metric-card">
-                <h3 style="margin-top:0; color: var(--tech-orange);">H200_SXM_2026</h3>
-                <div class="metric-row">HBM3e BW <span class="metric-val">4.8 TB/s</span></div>
-                <div class="metric-row">VRAM <span class="metric-val">141 GB</span></div>
-                <div class="metric-row">KV Pool <span class="metric-val">12.7 GB</span></div>
-                <div class="metric-row">Block Sz <span class="metric-val">16 KB</span></div>
-                <div class="metric-row">Max Blocks <span class="metric-val">831K</span></div>
-                
-                <h3 style="color: var(--tech-blue);">RUNTIME_STATUS</h3>
-                <div style="font-size: 0.75rem; color: #888; line-height: 1.4;">
-                    [INFO] Continuous: ON<br>
-                    [INFO] Prefix Cache: 1.2GB shared<br>
-                    [INFO] GQA: 8:2 ratio<br>
-                    [WARN] VRAM: 92% → Swap active<br>
-                    [INFO] QPS: 1,247 req/min
-                </div>
+                <h3 style="margin-top:0; color: var(--accent);">GPT-OSS-20B</h3>
+                <div class="metric-row"><span>Total params</span><span class="metric-val">21B</span></div>
+                <div class="metric-row"><span>Active params</span><span class="metric-val">3.6B</span></div>
+                <div class="metric-row"><span>FP16 weights</span><span class="metric-val">42.0 GB</span></div>
+                <div class="metric-row"><span>INT4 weights</span><span class="metric-val">10.5 GB</span></div>
+                <div class="metric-row"><span>Context window</span><span class="metric-val">128k</span></div>
+                <div class="metric-row"><span>KV per token</span><span class="metric-val">~36 KB</span></div>
+                <div class="metric-row"><span>KV @128k</span><span class="metric-val">~4.5 GB</span></div>
+            </div>
+
+            <div class="metric-card">
+                <h3 style="margin-top:0; color: var(--accent-2);">Serving Notes</h3>
+                <p class="tiny">
+                    Strong fit for low-latency local deployment, long-context reasoning, and multi-request serving when paired with paged KV cache management. [web:14][web:11][web:6]
+                </p>
             </div>
         </aside>
     </div>
 
-    <footer>
-        <p>NVIDIA H200 SXM // vLLM PagedAttention Reference // ENHANCED April 2026<br>
-        Sources: vLLM Docs, NVIDIA Specs, Production Benchmarks[web:1][web:7][code_file:1]</p>
-    </footer>
+    <div class="footer">
+        GPT-OSS-20B memory and throughput explainer for 2026 serving analysis.
+    </div>
 </div>
-
 </body>
 </html>
