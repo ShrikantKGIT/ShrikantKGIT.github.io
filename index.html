@@ -5,75 +5,154 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shrikant Khaire - Portfolio</title>
     <style>
+        /* Anthropic editorial color palette & modern typography */
         body {
-            font-family: monospace;
-            margin: 20px;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            background-color: #FBF9F6; /* Anthropic soft off-white background */
+            color: #191919;            /* Deep off-black / charcoal text */
+            margin: 40px auto;
+            max-width: 840px;
+            padding: 0 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
         }
+
         h1 {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            color: #191919;
         }
+
         h2 {
-            color: #111;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 3px;
-            margin-top: 25px;
-        }
-        h3 {
-            color: #333;
+            color: #E05A47; /* Anthropic signature "Adobe" clay / terracotta accent color */
             font-size: 0.85rem;
-            margin-bottom: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #EAE5DF;
+            padding-bottom: 8px;
+            margin-top: 45px;
+            margin-bottom: 20px;
         }
+
+        h3 {
+            color: #191919;
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-top: 0;
+            margin-bottom: 4px;
+        }
+
+        p, li {
+            color: #383838; /* Muted primary text for clean reading density */
+        }
+
+        a {
+            color: #E05A47;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(224, 90, 71, 0.4);
+            transition: border-color 0.2s ease;
+        }
+
+        a:hover {
+            border-bottom-style: solid;
+            border-color: #E05A47;
+        }
+
         .section {
-            margin-bottom: 20px;
-            font-size: 0.8rem;
+            margin-bottom: 35px;
         }
+
+        .summary-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #2D2D2D;
+        }
+
         .experience {
-            margin-bottom: 20px;
-            font-size: 0.8rem;
+            margin-bottom: 30px;
+            padding-left: 0;
         }
-        .experience p {
-            margin: 2px 0 8px 0;
-            font-style: italic;
-            color: #555;
+
+        .experience-meta {
+            margin: 0 0 12px 0;
+            font-size: 0.9rem;
+            color: #6E6962; /* Anthropic muted warm-gray */
+            font-weight: 500;
         }
+
         .contact-info {
-            margin-bottom: 15px;
-            font-size: 0.8rem;
+            margin-bottom: 30px;
+            font-size: 1rem;
         }
+
+        .contact-info p {
+            margin: 4px 0;
+        }
+        
+        .title-badge {
+            font-size: 1.1rem;
+            color: #6E6962;
+            font-weight: 400;
+        }
+
         ul {
-            margin-top: 5px;
+            margin-top: 8px;
             padding-left: 20px;
         }
+
         li {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        /* Technical knowledge layout updates */
+        .tech-list li {
+            list-style-type: none;
+            margin-bottom: 12px;
+            padding-left: 0;
+        }
+        
+        .tech-list b {
+            color: #191919;
+            display: inline-block;
+            min-width: 180px;
+        }
+
+        .patent-desc {
+            margin: 4px 0 15px 20px;
+            color: #59544E;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <h1>Shrikant Khaire</h1>
     <div class="contact-info">
-        <p>Executive Director, AI Platform & LLM Infrastructure</p>
-        <p>Charlotte, NC | www.linkedin.com/in/shrikant-khaire</p>
+        <p class="title-badge">Executive Director, AI Platform & LLM Infrastructure</p>
+        <p style="color: #6E6962;">Charlotte, NC &nbsp;|&nbsp; <a href="https://www.linkedin.com/in/shrikant-khaire" target="_blank">linkedin.com/in/shrikant-khaire</a></p>
     </div>
-    <div style="margin-bottom: 25px;">
-        <a href="interests.html">Topics of Interest</a>
-    </div>
-
-    <div class="section">
-        <h2>SUMMARY</h2>
-        <p style="max-width: 800px;">Engineering leader with 20+ years building enterprise AI, data, and ML platforms. Currently leading a manager-of-managers organization of 120 engineers across 5 teams (including 8 managers and 3 principal engineers). Managing a $25M budget and production platforms serving 3,000+ users, 2,000+ developers, 500M+ monthly API calls, and 10K+ QPS. Generated over $10M+ in annual savings through private GPU infrastructure, cloud optimization, and platform consolidation.</p>
+    
+    <div style="margin-bottom: 35px; font-size: 0.95rem;">
+        <a href="interests.html">Topics of Interest &rarr;</a>
     </div>
 
     <div class="section">
-        <h2>WORK EXPERIENCE</h2>
+        <h2>Summary</h2>
+        <p class="summary-text">Engineering leader with 20+ years building enterprise AI, data, and ML platforms. Currently leading a manager-of-managers organization of 120 engineers across 5 teams (including 8 managers and 3 principal engineers). Managing a $25M budget and production platforms serving 3,000+ users, 2,000+ developers, 500M+ monthly API calls, and 10K+ QPS. Generated over $10M+ in annual savings through private GPU infrastructure, cloud optimization, and platform consolidation.</p>
+    </div>
+
+    <div class="section">
+        <h2>Work Experience</h2>
         
         <div class="experience">
-            <h3>Wells Fargo - Charlotte, NC - Executive Director, Generative AI Platform</h3>
-            <p>Sep 2019 - Present</p>
+            <h3>Wells Fargo</h3>
+            <p class="experience-meta">Executive Director, Generative AI Platform &nbsp;&middot;&nbsp; Charlotte, NC &nbsp;&middot;&nbsp; Sep 2019 - Present</p>
             <ul>
                 <li>Led an enterprise LLM inference platform serving 2,000+ developers and 400+ modelers, achieving 10K+ QPS, ≤0.7s latency, and a 99.95% SLA at 85% GPU utilization.</li>
                 <li>Directed the design and deployment of private H200 GPU inference infrastructure (608 GPUs total) featuring MIG partitioning, Ray-based scheduling, and multi-engine inference (vLLM/Sglang), cutting cloud GPU spend by $8M/year.</li>
@@ -87,8 +166,8 @@
         </div>
 
         <div class="experience">
-            <h3>Bank of America - Charlotte, NC - Sr. Tech Manager, AI & Data Platform</h3>
-            <p>May 2015 - Sep 2019</p>
+            <h3>Bank of America</h3>
+            <p class="experience-meta">Sr. Tech Manager, AI & Data Platform &nbsp;&middot;&nbsp; Charlotte, NC &nbsp;&middot;&nbsp; May 2015 - Sep 2019</p>
             <ul>
                 <li>Automated the processing of 50M+ loan documents using OCR and NLP (BERT), driving a 60% operational efficiency improvement for 1,200+ users and removing regulatory backlogs.</li>
                 <li>Architected Hadoop-based analytics pipelines for a $550B+ loan portfolio that decreased processing cycles by 40% while preserving full data lineage for compliance audits.</li>
@@ -98,16 +177,16 @@
         </div>
 
         <div class="experience">
-            <h3>Bank of America - Charlotte, NC - Manager, Data & ML Engineering</h3>
-            <p>2006 - 2015</p>
+            <h3>Bank of America</h3>
+            <p class="experience-meta">Manager, Data & ML Engineering &nbsp;&middot;&nbsp; Charlotte, NC &nbsp;&middot;&nbsp; 2006 - 2015</p>
             <ul>
                 <li>Designed and scaled end-to-end Machine Learning pipelines for credit risk assessment and implemented enterprise-wide data lineage design patterns.</li>
             </ul>
         </div>
 
         <div class="experience">
-            <h3>Deutsche Bank - India - Senior Software Engineer</h3>
-            <p>2004 - 2006</p>
+            <h3>Deutsche Bank</h3>
+            <p class="experience-meta">Senior Software Engineer &nbsp;&middot;&nbsp; India &nbsp;&middot;&nbsp; 2004 - 2006</p>
             <ul>
                 <li>Served as lead developer on high-impact mainframe modernization initiatives (zOS to AIX migration), reducing baseline operating costs by 40%.</li>
             </ul>
@@ -115,26 +194,28 @@
     </div>
 
     <div class="section">
-        <h2>TECHNICAL KNOWLEDGE</h2>
-        <ul>
-            <li><b>AI Infrastructure:</b> LLM Inference, vLLM, Sglang, Ray, GPU Scheduling & MIG, KV Cache Optimization, Multi-Cloud AI Deployment (GCP Vertex AI, Azure ML, AWS SageMaker)</li>
-            <li><b>AI Platforms & Governance:</b> AI Gateway, RAG, Agentic Workflows (LangGraph/LangChain), Model Governance, Tool Registries, Observability (Arize AI), Evaluation (RAGAS)</li>
-            <li><b>Cloud, DevOps & Data:</b> GCP, OpenShift, Kubernetes, ArgoCD, Terraform, Spark, Airflow, Hadoop, Netezza, Feature Stores, Apache Iceberg, Multi-tenancy</li>
-            <li><b>Leadership:</b> 120-Engineer Orgs, Manager-of-Managers, $25M Budget Management, Vendor Strategy, Risk Management, Cross-functional Stakeholder Alignment</li>
+        <h2>Technical Knowledge</h2>
+        <ul class="tech-list" style="padding-left:0;">
+            <li><b>AI Infrastructure:</b> LLM Inference, vLLM, Sglang, Ray, GPU Scheduling & MIG, KV Cache Optimization, Multi-Cloud AI Deployment (GCP, Azure ML, AWS SageMaker)</li>
+            <li><b>AI Platforms:</b> AI Gateway, RAG, Agentic Workflows (LangGraph/LangChain), Model Governance, Tool Registries, Observability (Arize AI), Evaluation (RAGAS)</li>
+            <li><b>Cloud & Data Architecture:</b> GCP, OpenShift, Kubernetes, ArgoCD, Terraform, Spark, Airflow, Hadoop, Netezza, Feature Stores, Apache Iceberg, Multi-tenancy</li>
+            <li><b>Executive Leadership:</b> 120-Engineer Orgs, Manager-of-Managers, $25M Budget Management, Vendor Strategy, Risk Management, Cross-functional Stakeholder Alignment</li>
         </ul>
     </div>
 
     <div class="section">
-        <h2>EDUCATION & CREDENTIALS</h2>
+        <h2>Education & Credentials</h2>
         <ul>
-            <li>M.S. in Computer Science — University of Illinois Urbana-Champaign (UIUC)</li>
-            <li>Master of Engineering — University of Mumbai, India</li>
-            <li>Google Cloud Certified Professional Data Engineer | Google Cloud Certified Digital Leader</li>
-            <li><b>Patent: Synthetic Data Generation</b> | US 11675817
-                <p style="margin: 2px 0 10px 0; color: #555;">Produces synthetic datasets that safeguard sensitive data using rule-based and generative algorithms while preserving key statistical properties.</p>
+            <li>M.S. in Computer Science &mdash; University of Illinois Urbana-Champaign (UIUC)</li>
+            <li>Master of Engineering &mdash; University of Mumbai, India</li>
+            <li>Google Cloud Certified Professional Data Engineer &nbsp;&middot;&nbsp; Google Cloud Certified Digital Leader</li>
+            <li style="list-style-type: none; margin-left: -20px; margin-top: 15px;">
+                <b>Patent: Synthetic Data Generation</b> &nbsp;&middot;&nbsp; <span style="color:#6E6962;">US 11675817</span>
+                <p class="patent-desc">Produces synthetic datasets that safeguard sensitive data using rule-based and generative algorithms while preserving key statistical properties.</p>
             </li>
-            <li><b>Patent: Model Lifecycle Management</b> | US 12591507B2
-                <p style="margin: 2px 0 0 0; color: #555;">Integrated microservices framework to optimize model lifecycle, enhancing registration, development, validation, deployment, and monitoring of quantitative models.</p>
+            <li style="list-style-type: none; margin-left: -20px;">
+                <b>Patent: Model Lifecycle Management</b> &nbsp;&middot;&nbsp; <span style="color:#6E6962;">US 12591507B2</span>
+                <p class="patent-desc">Integrated microservices framework to optimize model lifecycle, enhancing registration, development, validation, deployment, and monitoring of quantitative models.</p>
             </li>
         </ul>
     </div>
