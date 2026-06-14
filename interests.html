@@ -5,58 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Topics of Interest - Shrikant Khaire</title>
     <style>
+        /* Anthropic editorial color palette & modern typography matching index page */
         body {
-            font-family: monospace;
-            margin: 20px;
-            font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            background-color: #FBF9F6; /* Anthropic soft off-white background */
+            color: #191919;            /* Deep off-black / charcoal text */
+            margin: 40px auto;
+            max-width: 840px;
+            padding: 0 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
         }
+
         h1 {
-            color: #363000;
-            font-size: 1.2rem; /* You can change this number */
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            color: #191919;
         }
-        h2, h3 {
-            color: #363050;
-            font-size: 1.0rem;
+
+        h2 {
+            color: #E05A47; /* Anthropic signature "Adobe" clay / terracotta accent color */
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #EAE5DF;
+            padding-bottom: 8px;
+            margin-top: 45px;
+            margin-bottom: 25px;
         }
-        .section {
-            margin-bottom: 20px;
-            font-size: 1.0rem;
+
+        p {
+            color: #383838;
+            margin-top: 0;
+            margin-bottom: 25px;
         }
-        .nav {
-            margin-bottom: 20px;
-            font-size: 0.8rem;
+
+        /* Navigation link styles */
+        a {
+            color: #E05A47;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(224, 90, 71, 0.4);
+            transition: border-color 0.2s ease, color 0.2s ease;
         }
+
+        a:hover {
+            border-bottom-style: solid;
+            border-color: #E05A47;
+        }
+
+        .nav-back {
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+
+        /* Clean executive layout for the topic catalog */
+        .topics-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+
+        .topic-item {
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+
+        .topic-item a {
+            color: #191919;
+            border-bottom: 1px solid #EAE5DF;
+            display: inline-block;
+            padding-bottom: 2px;
+        }
+
+        .topic-item a:hover {
+            color: #E05A47;
+            border-color: #E05A47;
+        }
+
+        /* Refined layout framework for eventual imagery placement */
         .topic-image {
-            width: 25%; /* Adjust this percentage as you see fit */
-            height: auto; /* This ensures the image doesn't get distorted */
-            border-radius: 8px;
-            margin-top: 15px;
+            display: block;
+            width: 30%;
+            max-width: 250px;
+            height: auto;
+            border-radius: 6px;
+            margin-top: 12px;
+            border: 1px solid #EAE5DF;
         }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="index.html">Home</a>
+
+    <div class="nav-back">
+        <a href="index.html">&larr; Back to Home</a>
     </div>
 
-    <div style="margin-bottom: 25px;">
-        <a href="genaiengineering.html">Generative AI Engineering</a>
-    </div>
+    <h1>Topics of Interest</h1>
+    <p>A collection of technical deep-dives, architectural blueprints, and engineering insights covering next-generation infrastructure platforms.</p>
 
-    <div style="margin-bottom: 25px;">
-        <a href="genaiengineeringNEW.html">Generative AI Engineering NEW </a>
+    <div>
+        <h2>Technical Deep Dives</h2>
+        <ul class="topics-list">
+            <li class="topic-item">
+                <a href="genaiengineering.html">Generative AI Engineering</a>
+            </li>
+            <li class="topic-item">
+                <a href="genaiengineeringNEW.html">Generative AI Engineering (New)</a>
+            </li>
+            <li class="topic-item">
+                <a href="MemoryArchitecture.html">Memory Architecture & Core Optimization</a>
+            </li>
+            <li class="topic-item">
+                <a href="dataengineering.html">Data Engineering & Distributed Pipelines</a>
+            </li>
+        </ul>
     </div>
-    
-    <div style="margin-bottom: 25px;">
-        <a href="MemoryArchitecture.html">Memory Architecture </a>
-    </div>
-    
-
-    
-    <div style="margin-bottom: 25px;">
-        <a href="dataengineering.html">Data Engineering</a>
-    </div>
-
 
 </body>
 </html>
