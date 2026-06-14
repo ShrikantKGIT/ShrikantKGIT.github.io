@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Document Processing & NLP at Scale - Shrikant Khaire</title>
+    <style>
+        /* Anthropic Editorial Identity & System Typography */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            background-color: #FBF9F6;
+            color: #191919;
+            margin: 40px auto;
+            max-width: 860px;
+            padding: 0 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
+            color: #191919;
+        }
+
+        h2 {
+            color: #E05A47; /* Anthropic Terracotta */
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            border-bottom: 1px solid #EAE5DF;
+            padding-bottom: 6px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #191919;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #383838;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        strong {
+            color: #191919;
+            font-weight: 600;
+        }
+
+        a {
+            color: #E05A47;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(224, 90, 71, 0.4);
+            transition: border-color 0.2s ease;
+        }
+
+        a:hover {
+            border-bottom-style: solid;
+            border-color: #E05A47;
+        }
+
+        .nav-back {
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+
+        /* Clean Technical Callout Boxes */
+        .callout-box {
+            background-color: #F5F2ED;
+            border-left: 3px solid #E05A47;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .callout-box h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #191919;
+            font-weight: 600;
+        }
+
+        /* Tables matching the master design language */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9rem;
+            background: #FBF9F6;
+        }
+
+        th {
+            background-color: #F5F2ED;
+            color: #191919;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #EAE5DF;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #EAE5DF;
+            color: #383838;
+            vertical-align: top;
+        }
+
+        tr:hover td {
+            background-color: #F5F2ED;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+            margin-top: 4px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-back">
+        <a href="index.html">&larr; Back to Home</a> &nbsp;|&nbsp; <a href="interests.html">Topics of Interest</a>
+    </div>
+
+    <h1>Intelligent Document Processing & NLP at Scale</h1>
+    <p style="font-size: 1.05rem; color: #2D2D2D; margin-bottom: 30px;">
+        Architectural specifications for mass unstructured document ingestion, computer vision layout parsing, and fine-tuned transformer token extraction models within institutional compliance frameworks.
+    </p>
+
+    <div class="section">
+        <h2>1. High-Throughput Document Processing Engines</h2>
+        <p>
+            During macroeconomic transitions—such as the massive financial migration away from legacy interbank rates like LIBOR—institutions are forced to parse millions of legacy credit agreements, legal riders, and unstructured PDF records. Manually audit-checking these volumes creates systemic backlogs and exposes organizations to acute compliance risks. To solve this, the platform deployed an intelligent document processing framework that automated the parsing of over <strong>50M+ complex loan documents</strong>, elevating operational throughput by <strong>60% for 1,200+ parallel business users</strong>.
+        </p>
+
+        <p>
+            The ingestion pipeline uses a layered extraction model. Rather than feeding raw, unformatted text blocks straight into natural language models, documents are passed through an advanced computer vision layout parsing layer. This step maps structural coordinates, locating section breaks, dense tables, and marginal notations to maintain absolute positional context.
+        </p>
+
+        <div class="callout-box">
+            <h4>The Intelligent Layout Ingestion Architecture</h4>
+            <ol>
+                <li><strong>Dynamic Image Normalization:</strong> Incoming scanned PDFs and image files are normalized using bilateral filtering, skew corrections, and adaptive thresholding algorithms to optimize down-stream pixel classification.</li>
+                <li><strong>Bounding-Box Layout Analysis:</strong> Object-detection models isolate structural components, separating native paragraph text blocks from deeply nested multi-column financial data grids.</li>
+                <li><strong>Optical Character Recognition (OCR) Layer:</strong> Specialized OCR text extraction runs across bounded coordinates, converting raw image layers into structured, machine-readable text arrays while appending structural geometry tags.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Fine-Tuning Transformer Encoder Frameworks</h2>
+        <p>
+            Extracting nuanced financial definitions or legal liability metadata out of multi-page agreements requires deeper contextual awareness than simple keyword matching can provide. The extraction engine uses fine-tuned transformer encoder architectures—specifically <strong>BERT and RoBERTa variants</strong>—trained natively on domain-specific corpora.
+        </p>
+        <p>
+            Unlike autoregressive decoder configurations optimized for fluid text generation, encoder systems calculate bidirectional context weights across input sequences, making them the ideal choice for token classification and Named Entity Recognition (NER) tasks:
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Extraction Dimension</th>
+                    <th>Autoregressive Decoder Models (e.g., GPT)</th>
+                    <th>Fine-Tuned Encoder Topologies (e.g., BERT)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Attention Mechanics</strong></td>
+                    <td>Causal masking limits attention to preceding tokens, blinding the model to downstream contextual elements.</td>
+                    <td><strong>Fully Bidirectional Attention</strong> processes preceding and following words simultaneously to map complex sentence structures.</td>
+                </tr>
+                <tr>
+                    <td><strong>Token Classification Value</strong></td>
+                    <td>Higher computational overhead; susceptible to generation hallucinations and extraction boundary drift.</td>
+                    <td><strong>Precise Token Index Pinpointing</strong> via dedicated classification heads, locating targets with absolute certainty.</td>
+                </tr>
+                <tr>
+                    <td><strong>Compute Footprint Cost</strong></td>
+                    <td>Requires significant GPU scaling across multi-node clusters to handle real-time streaming matrices.</td>
+                    <td>Lightweight and highly compact footprint; easily containerized onto standard cluster nodes for low-cost horizontal scaling.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>3. Scalable Workload Queuing & Extraction Pipelines</h2>
+        <p>
+            Sustaining stable operational velocities when processing millions of multi-page financial records requires decoupling ingestion workers from core transformer inference blocks. Letting ingestion nodes run unmitigated directly against compute clusters risks crashing hardware nodes under massive thread spikes.
+        </p>
+
+        <p>
+            The platform architecture avoids this issue by isolating execution steps within an event-driven microservices topology connected over distributed **Apache Kafka message buses**:
+        </p>
+
+        <div class="callout-box">
+            <h4>Decoupled Processing Queue & Extraction Blueprint</h4>
+            <ul>
+                <li><strong>Ingress File Watchers:</strong> Dedicated storage listener hooks detect incoming document blocks, streaming lightweight metadata notifications directly down to the primary message queue.</li>
+                <li><strong>Distributed Worker Scaling:</strong> Stateless container instances pull documents asynchronously from the queue, handling structural extraction tasks before loading payloads into the central messaging fabric.</li>
+                <li><strong>Batched Inference Managers:</strong> Dedicated inference containers pull raw text blocks from Kafka topics, grouping sequences into dense batches to keep GPU Tensor Cores cleanly saturated at maximum throughput.</li>
+                <li><strong>Immutable Compliance Auditing:</strong> Extracted entity records, confidence scores, and bounding-box coordinates are saved directly into distributed relational stores with complete lineage mapping for compliance audits.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Entity Alignment & Verification Control Loops</h2>
+        <p>
+            Even fine-tuned language platforms can introduce extraction errors if input documents contain poor scans or conflicting clauses. To enforce a zero-defect boundary within banking networks, extracted tokens pass through an automated post-processing validation engine before reaching downstream lines of business.
+        </p>
+        
+        <h3>Heuristic and Semantic Validation Layers</h3>
+        <ol>
+            <li><strong>Confidence Score Gating:</strong> Extracted entities carry token-level confidence metrics generated by the model's classification head. Payloads falling below a 95% threshold are flagged and automatically routed to human validation queues.</li>
+            <li><strong>Deterministic Rule Constraints:</strong> Extracted values are validated against strict business rules (e.g., ensuring extracted interest adjustment dates fall strictly within valid contract periods).</li>
+            <li><strong>Lineage Correlation:</strong> The system maintains an unalterable link mapping every extracted database entry back to its source file hash and geometric document coordinates, providing an audit trail for regulatory compliance.</li>
+        </ol>
+    </div>
+
+</body>
+</html>
