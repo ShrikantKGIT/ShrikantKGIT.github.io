@@ -9,31 +9,54 @@
             font-family: monospace;
             margin: 20px;
             font-size: 0.9rem;
+            line-height: 1.4;
         }
         h1 {
-            font-size: 1.1rem; /* You can change this number */
+            font-size: 1.2rem;
+            margin-bottom: 5px;
         }
-        h2, h3 {
+        h2 {
+            color: #111;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 3px;
+            margin-top: 25px;
+        }
+        h3 {
             color: #333;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
         }
         .section {
             margin-bottom: 20px;
             font-size: 0.8rem;
         }
         .experience {
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+        }
+        .experience p {
+            margin: 2px 0 8px 0;
+            font-style: italic;
+            color: #555;
+        }
+        .contact-info {
             margin-bottom: 15px;
             font-size: 0.8rem;
         }
-        .contact-info {
-            margin-bottom: 20px;
-            font-size: 0.8rem;
+        ul {
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
     <h1>Shrikant Khaire</h1>
     <div class="contact-info">
+        <p>Executive Director, AI Platform & LLM Infrastructure</p>
         <p>Charlotte, NC | www.linkedin.com/in/shrikant-khaire</p>
     </div>
     <div style="margin-bottom: 25px;">
@@ -41,63 +64,78 @@
     </div>
 
     <div class="section">
-        <h2>WORK EXPERIENCE</h2>
-        <div class="experience">
-            <h3>Wells Fargo - Charlotte, NC - Sr. Engineering Manager</h3>
-            <p>Sep 2019-Present</p>
-            <ul>
-                <li>Migrated a 6PB data warehouse to hybrid cloud, saving $10M/year in vendor fees.</li>
-                <li>Reduced server footprint by 66%, accelerated model execution by 50%, and shortened validation cycle time by 70% via in-place validation.</li>
-                <li>Partnered with infra, and compliance teams to deploy a 190 PFLOPS (FP8 inference) H200 GPU cluster for GenAl model validation, enabling new regulatory capabilities while saving an approx. $3M/year vs. cloud alternatives.</li>
-                <li>Delivered a Model-as-a-Service platform supporting 40K+ daily credit decisions.</li>
-                <li>Reduced decision latency by 30% to &lt;0.7s, accelerating approval workflows for high-volume lending products such as credit cards and home loans.</li>
-                <li>Led four teams in delivering a self-service platform for 500+ modelers that cut time-to-market to 10 weeks (from 6+ months), tripled model run-time efficiency, and eliminated all CCAR overtime.</li>
-                <li>Engineered an analytics platform with Dremio and Power BI for 200+ analysts, improving regulatory reporting 10x, reducing CCAR/DFAST QA effort by 70%, and strengthening compliance through standardized report lineage.</li>
-            </ul>
-        </div>
-
-        <div class="experience">
-            <h3>Bank of America - Charlotte, NC - Sr. Technology Manager & Technology Consultant</h3>
-            <p>May 2006 - Sep 2019</p>
-            <ul>
-                <li>Built a document processing platform using OCR and BERT to automate 50M+ loan records during the LIBOR transition, increasing operational efficiency by 60% and reducing regulatory backlog.</li>
-                <li>Architected a Hadoop-based data pipeline supporting CCAR models for a $500B+ loan portfolio, cutting data processing time by 40% and enabling full input-output lineage for regulatory audits.</li>
-                <li>Redesigned ROI calculators for a $55B commercial real estate portfolio by integrating zip-code-level data, enabling precise loss forecasting and reducing projected quarterly losses by $4M.</li>
-                <li>Consolidated 110+ databases into a centralized Netezza instance, improving analyst accessibility and saving $2M+ in operational overhead.</li>
-                <li>Led integration with TSYS virtual payment processing across a 15-engineer team, enabling 500K+ monthly e-commerce transactions and reducing processing latency by 25%.</li>
-            </ul>
-        </div>
-
-        <div class="experience">
-            <h3>Deutsche Bank - India - Senior Software Engineer (Consultant)</h3>
-            <p>2004-2006</p>
-            <ul>
-                <li>Lead developer on zOS to AIX migration projects achieving 40% reduction in annual operating cost.</li>
-            </ul>
-        </div>
+        <h2>SUMMARY</h2>
+        <p style="max-width: 800px;">Engineering leader with 20+ years building enterprise AI, data, and ML platforms. Currently leading a manager-of-managers organization of 120 engineers across 5 teams (including 8 managers and 3 principal engineers). Managing a $25M budget and production platforms serving 3,000+ users, 2,000+ developers, 500M+ monthly API calls, and 10K+ QPS. Generated over $10M+ in annual savings through private GPU infrastructure, cloud optimization, and platform consolidation.</p>
     </div>
 
     <div class="section">
-        <h2>EDUCATION & ACHIEVEMENTS</h2>
-        <ul>
-            <li>Master of Engineering, University of Mumbai, India</li>
-            <li>Google Cloud Certified Professional Data Engineer | Google Cloud Certified Digital Leader</li>
-            <li>Patent: Synthetic Data Generation (SDG) | US 11675817
-                <p>SDG produces synthetic datasets that safeguard sensitive data using rule-based and generative algorithms while preserving key statistical properties.</p>
-            </li>
-            <li>Patent: Model Lifecycle Management | Application# 18/329,382
-                <p>Integrated microservices framework to optimize model lifecycle enhancing registration, development, validation, deployment, and monitoring of quantitative models.</p>
-            </li>
-        </ul>
+        <h2>WORK EXPERIENCE</h2>
+        
+        <div class="experience">
+            <h3>Wells Fargo - Charlotte, NC - Executive Director, Generative AI Platform</h3>
+            <p>Sep 2019 - Present</p>
+            <ul>
+                <li>Led an enterprise LLM inference platform serving 2,000+ developers and 400+ modelers, achieving 10K+ QPS, ≤0.7s latency, and a 99.95% SLA at 85% GPU utilization.</li>
+                <li>Directed the design and deployment of private H200 GPU inference infrastructure (608 GPUs total) featuring MIG partitioning, Ray-based scheduling, and multi-engine inference (vLLM/Sglang), cutting cloud GPU spend by $8M/year.</li>
+                <li>Built an enterprise AI Gateway processing 500M+ monthly API calls for 3,000+ users; implemented OAuth2/JWT access control, comprehensive audit trails, model routing, and guardrails with less than 50ms added latency.</li>
+                <li>Accelerated ML model time-to-market from 6+ months to 4 weeks by launching a self-serve ML platform equipped with automated validation, deployment, Git-based versioning, and a 2K+ feature store.</li>
+                <li>Migrated a 6PB data warehouse and batch model infrastructure to a hybrid cloud environment (GCP + OpenShift), shrinking the server footprint from 300 to 100 nodes, halving processing times, and reducing annual costs by $10M.</li>
+                <li>Engineered enterprise RAG and semantic search capabilities utilized by 1,500+ employees, lifting retrieval precision by 35% and dropping manual search times by 60%.</li>
+                <li>Established enterprise governance frameworks for agentic AI workflows (150+ tool registry, versioning, guardrails), automating over 50 processes and eliminating 40% of manual effort for 300+ users.</li>
+                <li>Headed a 120-engineer organization, managing performance, succession planning, vendor strategy, and cross-functional alignment with Product and Risk business partners.</li>
+            </ul>
+        </div>
+
+        <div class="experience">
+            <h3>Bank of America - Charlotte, NC - Sr. Tech Manager, AI & Data Platform</h3>
+            <p>May 2015 - Sep 2019</p>
+            <ul>
+                <li>Automated the processing of 50M+ loan documents using OCR and NLP (BERT), driving a 60% operational efficiency improvement for 1,200+ users and removing regulatory backlogs.</li>
+                <li>Architected Hadoop-based analytics pipelines for a $550B+ loan portfolio that decreased processing cycles by 40% while preserving full data lineage for compliance audits.</li>
+                <li>Consolidated over 110 distributed databases into a central Netezza data platform, saving $2M/year and improving data consistency across credit risk tracking systems.</li>
+                <li>Led a 15-engineer team through a complex TSYS virtual payment integration handling 500K+ monthly transactions.</li>
+            </ul>
+        </div>
+
+        <div class="experience">
+            <h3>Bank of America - Charlotte, NC - Manager, Data & ML Engineering</h3>
+            <p>2006 - 2015</p>
+            <ul>
+                <li>Designed and scaled end-to-end Machine Learning pipelines for credit risk assessment and implemented enterprise-wide data lineage design patterns.</li>
+            </ul>
+        </div>
+
+        <div class="experience">
+            <h3>Deutsche Bank - India - Senior Software Engineer</h3>
+            <p>2004 - 2006</p>
+            <ul>
+                <li>Served as lead developer on high-impact mainframe modernization initiatives (zOS to AIX migration), reducing baseline operating costs by 40%.</li>
+            </ul>
+        </div>
     </div>
 
     <div class="section">
         <h2>TECHNICAL KNOWLEDGE</h2>
         <ul>
-            <li><b>Cloud & Distributed Systems:</b> GCP, OpenShift, Kubernetes, API, Microservices, Kafka, DevOps</li>
-            <li><b>Data Engineering:</b> Hadoop, Spark, Airflow, SQL, Apache Iceberg, Oracle, PostgreSQL, Dremio, Power BI</li>
-            <li><b>Languages & Machine Learning:</b> Python, Unix, MLOps, PyTorch, Ray</li>
-            <li><b>Management:</b> Team Leadership, Strategic Roadmap, Product & Program Management, Stakeholder & Change Management</li>
+            <li><b>AI Infrastructure:</b> LLM Inference, vLLM, Sglang, Ray, GPU Scheduling & MIG, KV Cache Optimization, Multi-Cloud AI Deployment (GCP Vertex AI, Azure ML, AWS SageMaker)</li>
+            <li><b>AI Platforms & Governance:</b> AI Gateway, RAG, Agentic Workflows (LangGraph/LangChain), Model Governance, Tool Registries, Observability (Arize AI), Evaluation (RAGAS)</li>
+            <li><b>Cloud, DevOps & Data:</b> GCP, OpenShift, Kubernetes, ArgoCD, Terraform, Spark, Airflow, Hadoop, Netezza, Feature Stores, Apache Iceberg, Multi-tenancy</li>
+            <li><b>Leadership:</b> 120-Engineer Orgs, Manager-of-Managers, $25M Budget Management, Vendor Strategy, Risk Management, Cross-functional Stakeholder Alignment</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>EDUCATION & CREDENTIALS</h2>
+        <ul>
+            <li>M.S. in Computer Science — University of Illinois Urbana-Champaign (UIUC)</li>
+            <li>Master of Engineering — University of Mumbai, India</li>
+            <li>Google Cloud Certified Professional Data Engineer | Google Cloud Certified Digital Leader</li>
+            <li><b>Patent: Synthetic Data Generation</b> | US 11675817
+                <p style="margin: 2px 0 10px 0; color: #555;">Produces synthetic datasets that safeguard sensitive data using rule-based and generative algorithms while preserving key statistical properties.</p>
+            </li>
+            <li><b>Patent: Model Lifecycle Management</b> | Application# 18/329,382
+                <p style="margin: 2px 0 0 0; color: #555;">Integrated microservices framework to optimize model lifecycle, enhancing registration, development, validation, deployment, and monitoring of quantitative models.</p>
+            </li>
         </ul>
     </div>
 </body>
