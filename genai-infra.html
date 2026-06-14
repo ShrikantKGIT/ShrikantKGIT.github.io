@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative AI Platform & Core LLM Infrastructure - Shrikant Khaire</title>
+    <style>
+        /* Anthropic Editorial Identity & System Typography */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            background-color: #FBF9F6;
+            color: #191919;
+            margin: 40px auto;
+            max-width: 860px;
+            padding: 0 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
+            color: #191919;
+        }
+
+        h2 {
+            color: #E05A47; /* Anthropic Terracotta */
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            border-bottom: 1px solid #EAE5DF;
+            padding-bottom: 6px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #191919;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #383838;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        strong {
+            color: #191919;
+            font-weight: 600;
+        }
+
+        a {
+            color: #E05A47;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(224, 90, 71, 0.4);
+            transition: border-color 0.2s ease;
+        }
+
+        a:hover {
+            border-bottom-style: solid;
+            border-color: #E05A47;
+        }
+
+        .nav-back {
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+
+        /* Clean Technical Callout Boxes */
+        .callout-box {
+            background-color: #F5F2ED;
+            border-left: 3px solid #E05A47;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .callout-box h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #191919;
+            font-weight: 600;
+        }
+
+        /* Tables matching the master design language */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9rem;
+            background: #FBF9F6;
+        }
+
+        th {
+            background-color: #F5F2ED;
+            color: #191919;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #EAE5DF;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #EAE5DF;
+            color: #383838;
+            vertical-align: top;
+        }
+
+        tr:hover td {
+            background-color: #F5F2ED;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+            margin-top: 4px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-back">
+        <a href="index.html">&larr; Back to Home</a> &nbsp;|&nbsp; <a href="interests.html">Topics of Interest</a>
+    </div>
+
+    <h1>Generative AI Platform & Core LLM Infrastructure</h1>
+    <p style="font-size: 1.05rem; color: #2D2D2D; margin-bottom: 30px;">
+        Architectural specifications of an enterprise-scale LLM execution layer, detailing private multi-GPU hardware fabrics, dynamic gateway mediation topologies, and low-latency safety guardrails.
+    </p>
+
+    <div class="section">
+        <h2>1. Private multi-GPU Compute Fabric</h2>
+        <p>
+            Operating an enterprise Large Language Model serving infrastructure within highly regulated sectors demands a transition away from public cloud tenancy toward highly optimized, private bare-metal configurations. The foundation of this system comprises an aggregated cluster of <strong>608 NVIDIA H200 GPUs</strong> arranged into high-density <strong>HGX H200 8-GPU nodes</strong>, yielding massive computational throughput capped at 190 PFLOPS of system scale.
+        </p>
+        
+        <h3>Multi-Instance GPU (MIG) Partitioning Strategy</h3>
+        <p>
+            To achieve a baseline target of <strong>85% hardware utilization</strong> across diverse internal consumption layers, the cluster uses hardware-level Multi-Instance GPU (MIG) partitioning combined with Ray-based distributed task scheduling. Instead of letting smaller model instances or embedding lookups lock up an entire 141GB HBM3e block, each H200 is divided into isolated hardware slices. 
+        </p>
+        <p>
+            This ensures dedicated allocation of Streaming Multiprocessors (SMs), crossbar paths, and memory controllers per instance. This isolation guarantees predictable execution latencies ($\le0.7$s at $10\text{K}+$ QPS) and strict quality-of-service (QoS) boundaries by blocking multi-tenant noisy neighbor memory contention.
+        </p>
+
+        <h3>SXM5 vs. PCIe Form Factor Interconnect Matrices</h3>
+        <p>
+            To sustain continuous multi-node model parallelization without hitting strict communication walls, the platform explicitly differentiates deployment topology shapes based on the physical connection interconnect layers:
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Interconnect Characteristic</th>
+                    <th>SXM5 Form Factor (HGX Mesh)</th>
+                    <th>PCIe NVL (Bridge Configuration)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Bidirectional Bandwidth</strong></td>
+                    <td><strong>900 GB/s</strong> via 4th-Gen NVLink mesh connections.</td>
+                    <td><strong>128 GB/s</strong> via standard Gen5 slots (bridged pairs max out at 450 GB/s).</td>
+                </tr>
+                <tr>
+                    <td><strong>Memory Address Architecture</strong></td>
+                    <td>Establishes a single unified memory address map across up to 256 GPUs via NVSwitch.</td>
+                    <td>Memory mapping restricted locally to point-to-point card bridges.</td>
+                </tr>
+                <tr>
+                    <td><strong>Target Production Workload</strong></td>
+                    <td>High-throughput, real-time distributed inference for trillion-parameter MoE architectures.</td>
+                    <td>Isolated fine-tuning runs, lightweight classification setups, and edge safety evaluation pipelines.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>2. The Enterprise AI Gateway</h2>
+        <p>
+            Serving as the unified access control and routing point for more than <strong>3,000 active enterprise users</strong> and <strong>2,000 developers</strong>, the AI Gateway manages a baseline processing volume exceeding <strong>500M+ monthly API calls</strong>. The gateway layer must balance complex structural traffic mediation loops with ultra-low latency profiles, keeping aggregate platform mediation overhead under <strong>50ms</strong>.
+        </p>
+
+        <div class="callout-box">
+            <h4>Gateway Architecture & Traffic Mediation Blueprint</h4>
+            <ol>
+                <li><strong>Identity & Access Management (IAM):</strong> Ingress payloads are evaluated via decoupled OAuth2/JWT tokens containing client keys, organizational metadata, and cost-center allocations.</li>
+                <li><strong>Semantic Rate Limiting:</strong> Replaces rigid IP/endpoint counters with token-aware tracking metrics. The gateway calculates token usage dynamically, applying throttling mechanisms before requests reach the execution layer.</li>
+                <li><strong>Dynamic Model Routing Layer:</strong> Upstream traffic is routed based on payload size, semantic complexity analysis, and real-time backend cluster pressure. Requests are instantly matched with the most efficient model instance, preserving larger cluster footprints for complex workflows.</li>
+                <li><strong>Immutable Audit Trails:</strong> Every transaction generates a cryptographic audit trail that logs inputs, performance metadata, risk profiles, and generated hashes to meet regulatory compliance requirements.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Low-Latency Model Armor & Security Guardrails</h2>
+        <p>
+            Operating AI systems inside institutional environments requires defensive security wrappers surrounding every inference pass. The gateway wraps all execution loops inside a multi-tiered <strong>Model Armor</strong> framework, executing real-time sanitization checks on both ingress prompts and egress token generation runs.
+        </p>
+
+        <div class="callout-box">
+            <h4>LlamaGuard and Model Armor Integration Pipeline</h4>
+            <p>
+                To shield endpoints against complex prompt-injection attacks, toxic classification anomalies, and variable model extraction attempts, incoming text blocks are fed into specialized alignment models—including customized <strong>LlamaGuard</strong> instances. This occurs via asynchronous sidecar threads before the request hits the primary execution engine.
+            </p>
+            <ul>
+                <li><strong>Input Sanitization:</strong> Prompt strings are cross-checked against a rolling semantic blocklist database to detect indirect injections, recursive jailbreaks, and system prompt override attempts.</li>
+                <li><strong>PII Masking Mask Matrix:</strong> Highly sensitive alphanumeric strings (e.g., social security strings, credit numbers, internal account hashes) are extracted using regex token grids and transformer-based entity recognizers, substituting values with ephemeral placeholders.</li>
+                <li><strong>Egress Hallucination Verification:</strong> Generated token outputs pass through an out-of-band validator that detects and blocks unauthorized data leakage, systemic hallucinations, or proprietary string exposures before final streaming transmission.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. High-Speed Data Ingestion Subsystems</h2>
+        <p>
+            As context windows expand into millions of tokens, model ingestion performance shifts from being a purely compute-bound problem to an input/output memory bus bottleneck. High-context processing models risk severe execution drops if data loading stalls during the initial prompt ingestion step.
+        </p>
+
+        <p>
+            To address this bottleneck, the ingestion framework bypasses typical operating system overhead by using <strong>GPUDirect Storage (GDS)</strong> combined with <strong>Remote Direct Memory Access (RDMA)</strong> over a dedicated <strong>InfiniBand network fabric</strong>. This layout forms a high-speed express path, loading token embeddings straight from NVMe storage subsystems into GPU memory.
+        </p>
+
+        <div class="callout-box">
+            <h4>Ingestion Path Comparison: Standard vs. GDS+RDMA Architecture</h4>
+            <p><strong>Traditional Processing Path:</strong> Storage Nodes &rarr; POSIX System Memory Cache &rarr; Host CPU Staging Staging Blocks &rarr; PCIe Bus Allocation &rarr; GPU HBM3e Memory.</p>
+            <p style="color: #E05A47; font-weight: 600;"><strong>Optimized GPUDirect GDS Acceleration Path:</strong> NVMe Storage Node &rarr; InfiniBand Fabric Fabric Switches &rarr; ConnectX SmartNIC &rarr; RDMA Bypass Over PCIe Mesh &rarr; GPU HBM3e VRAM Core.</p>
+            <p style="margin-top: 12px; font-style: italic; color: #59544E;">
+                This architecture eliminates intermediate bounce-buffer copies within host RAM, completely freeing up CPU cycles and saturating the H200's high-velocity 4.8 TB/s memory bus. As a result, prompt-prefill processing times for large scale contexts dropped by up to 70%.
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>
