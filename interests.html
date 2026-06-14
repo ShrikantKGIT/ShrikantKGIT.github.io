@@ -64,40 +64,52 @@
         }
 
         /* Clean executive layout for the topic catalog */
-        .topics-list {
-            list-style-type: none;
-            padding-left: 0;
+        .topics-grid {
             margin-top: 10px;
         }
 
+        .topic-group {
+            margin-bottom: 35px;
+        }
+
+        .topics-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
         .topic-item {
-            margin-bottom: 24px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            letter-spacing: -0.01em;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #EAE5DF;
         }
 
-        .topic-item a {
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+
+        .topic-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .topic-title a {
             color: #191919;
-            border-bottom: 1px solid #EAE5DF;
-            display: inline-block;
-            padding-bottom: 2px;
+            border-bottom: 1px solid transparent;
         }
 
-        .topic-item a:hover {
+        .topic-title a:hover {
             color: #E05A47;
-            border-color: #E05A47;
+            border-bottom: 1px solid #E05A47;
         }
 
-        /* Refined layout framework for eventual imagery placement */
-        .topic-image {
-            display: block;
-            width: 30%;
-            max-width: 250px;
-            height: auto;
-            border-radius: 6px;
-            margin-top: 12px;
-            border: 1px solid #EAE5DF;
+        .topic-desc {
+            font-size: 0.9rem;
+            color: #59544E;
+            margin: 4px 0 0 0;
+            max-width: 760px;
         }
     </style>
 </head>
@@ -108,24 +120,46 @@
     </div>
 
     <h1>Topics of Interest</h1>
-    <p>A collection of technical deep-dives, architectural blueprints, and engineering insights covering next-generation infrastructure platforms.</p>
+    <p>An architectural matrix detailing engineering designs, computational runtime frameworks, and distributed platform topologies implemented across scale-critical enterprise environments.</p>
 
-    <div>
-        <h2>Technical Deep Dives</h2>
-        <ul class="topics-list">
-            <li class="topic-item">
-                <a href="genaiengineering.html">Generative AI Engineering</a>
-            </li>
-            <li class="topic-item">
-                <a href="genaiengineeringNEW.html">Generative AI Engineering (New)</a>
-            </li>
-            <li class="topic-item">
-                <a href="MemoryArchitecture.html">Memory Architecture & Core Optimization</a>
-            </li>
-            <li class="topic-item">
-                <a href="dataengineering.html">Data Engineering & Distributed Pipelines</a>
-            </li>
-        </ul>
+    <div class="topics-grid">
+        
+        <div class="topic-group">
+            <h2>I. Next-Generation AI Systems</h2>
+            <ul class="topics-list">
+                <li class="topic-item">
+                    <div class="topic-title"><a href="genai-infra.html">1. Generative AI Platform & Core LLM Infrastructure</a></div>
+                    <div class="topic-desc">Architectural deep dive into private H200 GPU fabric clusters (608 GPUs), MIG partitioning profiles, high-speed GPUDirect storage ingestion, and enterprise AI Gateway control layers.</div>
+                </li>
+                <li class="topic-item">
+                    <div class="topic-title"><a href="memory-serving.html">2. Advanced Memory Architecture & Serving Engines</a></div>
+                    <div class="topic-desc">Evaluating memory efficiency vectors: PagedAttention mechanics within vLLM/Sglang, continuous token-level scheduling mechanics, and compute/memory-bound workload disaggregation over 900 GB/s NVLink fabrics.</div>
+                </li>
+                <li class="topic-item">
+                    <div class="topic-title"><a href="governance-agents.html">3. Model Lifecycle, Governance, & Agentic Workflows</a></div>
+                    <div class="topic-desc">Framework design patterns for model compaction (FP8 Transformer Engine scaling, AWQ, GPTQ), automated self-service registration/validation loops, and governance systems for multi-agent tool-registry execution.</div>
+                </li>
+                <li class="topic-item">
+                    <div class="topic-title"><a href="cloud-ops.html">4. Cloud Engineering, Orchestration, & Observability</a></div>
+                    <div class="topic-desc">Platform operations across hybrid spaces (GCP + OpenShift): Topology-aware Kubernetes orchestration, metrics-driven auto-scaling-to-zero strategies, and real-time telemetry routing control planes.</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="topic-group">
+            <h2>II. Intelligent Automation & Core Data Platforms</h2>
+            <ul class="topics-list">
+                <li class="topic-item">
+                    <div class="topic-title"><a href="document-processing.html">5. Intelligent Document Processing & NLP at Scale</a></div>
+                    <div class="topic-desc">High-throughput language processing frameworks: Scaling deep document classification and token extraction architectures (OCR + BERT) across 50M+ complex credit records within strictly bound compliance timelines.</div>
+                </li>
+                <li class="topic-item">
+                    <div class="topic-title"><a href="data-lakes.html">6. Distributed Data Lakes & Large-Scale Portfolio Analytics</a></div>
+                    <div class="topic-desc">Enterprise Big Data architecture: Engineering analytics pipelines for $550B+ banking portfolios using Spark, Netezza, and Hadoop. Imposing immutable audit lineage tracking patterns, and zOS mainframe modernization pathways.</div>
+                </li>
+            </ul>
+        </div>
+
     </div>
 
 </body>
