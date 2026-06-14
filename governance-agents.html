@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Lifecycle, Governance, & Agentic Workflows - Shrikant Khaire</title>
+    <style>
+        /* Anthropic Editorial Identity & System Typography */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            background-color: #FBF9F6;
+            color: #191919;
+            margin: 40px auto;
+            max-width: 860px;
+            padding: 0 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
+            color: #191919;
+        }
+
+        h2 {
+            color: #E05A47; /* Anthropic Terracotta */
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            border-bottom: 1px solid #EAE5DF;
+            padding-bottom: 6px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #191919;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #383838;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        strong {
+            color: #191919;
+            font-weight: 600;
+        }
+
+        a {
+            color: #E05A47;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(224, 90, 71, 0.4);
+            transition: border-color 0.2s ease;
+        }
+
+        a:hover {
+            border-bottom-style: solid;
+            border-color: #E05A47;
+        }
+
+        .nav-back {
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+
+        /* Clean Technical Callout Boxes */
+        .callout-box {
+            background-color: #F5F2ED;
+            border-left: 3px solid #E05A47;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .callout-box h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #191919;
+            font-weight: 600;
+        }
+
+        /* Tables matching the master design language */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9rem;
+            background: #FBF9F6;
+        }
+
+        th {
+            background-color: #F5F2ED;
+            color: #191919;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #EAE5DF;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #EAE5DF;
+            color: #383838;
+            vertical-align: top;
+        }
+
+        tr:hover td {
+            background-color: #F5F2ED;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+            margin-top: 4px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-back">
+        <a href="index.html">&larr; Back to Home</a> &nbsp;|&nbsp; <a href="interests.html">Topics of Interest</a>
+    </div>
+
+    <h1>Model Lifecycle, Governance, & Agentic Workflows</h1>
+    <p style="font-size: 1.05rem; color: #2D2D2D; margin-bottom: 30px;">
+        Architectural framework blueprints for automated model staging, multi-precision compression pipelines, and security controls for distributed multi-agent tool execution within regulated networks.
+    </p>
+
+    <div class="section">
+        <h2>1. Automated Self-Serve LLMOps Platform</h2>
+        <p>
+            Deploying quantitative and generative models within highly audited institutional frameworks historically required exhaustive validation cycles, often forcing a 6+ month time-to-market. The core optimization strategy leverages a microservices-based <strong>Model Lifecycle Management platform</strong>, which compresses this cycle down to <strong>4 weeks</strong> via standardized, self-serve automated automation pathways.
+        </p>
+
+        <div class="callout-box">
+            <h4>Continuous Validation & Staging Infrastructure Pipeline</h4>
+            <ol>
+                <li><strong>Automated Validation Gating:</strong> Incoming weights or fine-tuned checkpoints trigger an automated pipeline that assesses semantic degradation, code verification anomalies, and structural compliance violations.</li>
+                <li><strong>Git-Based Artifact Versioning:</strong> Model weights, configuration mappings, and parsing dependencies are given unique cryptographic hashes and committed directly to an immutable GitOps repository framework.</li>
+                <li><strong>Resource Quota Enforcement:</strong> Virtual staging namespaces are allocated dynamically based on strict compute limits, preventing unvalidated workloads from exhausting shared H200 cluster allocations.</li>
+                <li><strong>2K+ Unified Feature Store:</strong> Low-latency offline and online feature pipelines ensure that prompt conditioning, client meta-tensors, and tabular risk scores are populated uniformly across all active staging and production tiers.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Model Compaction & Quantization Matrices</h2>
+        <p>
+            While private compute fabrics mitigate host-tenancy risk, scaling large language model instances across millions of multi-turn internal conversations requires aggressive weight compaction. Compressing models minimizes memory bandwidth requirements, allowing high-parameter systems to reside within smaller VRAM footprints without losing target classification capabilities.
+        </p>
+        <p>
+            The production pipeline enforces mixed-precision translation tasks using a tiered quantization model strategy:
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Quantization Type</th>
+                    <th>Algorithmic Pipeline Mechanics</th>
+                    <th>Infrastructure & Accuracy Impact</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Native FP8 (Transformer Engine)</strong></td>
+                    <td>Analyzes tensor value distributions in real-time. Dynamically adjusts scaling factors to map variables into 8-bit floating point structures.</td>
+                    <td><strong>Doubles raw matrix math throughput</strong> across 4th-Gen Tensor Cores while preserving native perplexity parameters out-of-the-box.</td>
+                </tr>
+                <tr>
+                    <td><strong>AWQ (Activation-Aware)</strong></td>
+                    <td>Protects the top 1% of highly critical "salient weights" by monitoring activation distributions, quantizing only the remaining matrix rows down to 4-bit configurations.</td>
+                    <td>Significantly reduces internal memory footprints, allowing massive 70B parameter models to sit co-resident in localized memory tiers.</td>
+                </tr>
+                <tr>
+                    <td><strong>GPTQ (Layer-Wise)</strong></td>
+                    <td>Uses second-order error optimization routines to compress parameter channels layer-by-layer down to stable INT4 formats.</td>
+                    <td>Minimizes memory-bus saturation during high-concurrency decode iterations, enabling efficient large-batch execution loops.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>3. Enterprise Agentic Workflows & Multi-Agent Governance</h2>
+        <p>
+            Transitioning platforms from basic request-response systems to autonomous **Agentic Workflows** introduces unique risk profiles, particularly regarding unauthorized loop executions or data extraction attempts. Managing multi-agent coordination across hundreds of automated corporate processes necessitates an out-of-band security and mediation framework.
+        </p>
+
+        <p>
+            The governance framework establishes strict boundaries for agentic execution pipelines through an autonomous <strong>Tool Registry</strong> layer. This design pattern separates the language model's reasoning loops from direct execution capabilities within the internal network:
+        </p>
+
+        <div class="callout-box">
+            <h4>Agentic Governance Framework & Verification Loop</h4>
+            <ul>
+                <li><strong>150+ Guarded Tool Registry:</strong> All target script modules, database connectors, and application endpoints must be registered within an immutable registry schema detailing ownership meta-tags and precise execution criteria.</li>
+                <li><strong>Allowed Actions Metadata:</strong> Instead of executing arbitrary tool strings, agent loops submit execution tokens. The registry checks these tokens against a metadata matrix that limits file paths, memory structures, and network ingress paths.</li>
+                <li><strong>Guardrail Enforcement:</strong> State machine environments track tool chain execution paths. Suspicious execution patterns or recursive prompt generation steps trigger immediate task termination to protect system stability.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Enterprise RAG Precision & Semantic Evaluation Controls</h2>
+        <p>
+            To power advanced knowledge search across 1,500+ employees while minimizing hallucination threats, the platform uses an enterprise-grade Retrieval-Augmented Generation (RAG) orchestration layer. The ingestion pipeline splits unstructured data repositories into high-density vector embeddings, which are stored in optimized database clusters for ultra-low latency semantic queries.
+        </p>
+        
+        <h3>Automated Quality Evaluation via RAGAS</h3>
+        <p>
+            To guarantee that retrieval pipelines maintain a strict compliance boundary, out-of-band evaluation loops continuously monitor production pipelines using the <strong>RAGAS (Retrieval Augmented Generation Assessment)</strong> framework. The platform evaluates three primary validation vectors:
+        </p>
+        <ol>
+            <li><strong>Faithfulness:</strong> Measures the factual accuracy of the generated answer against the retrieved text segments, blocking instances where the model fabric interpolates unverified external claims.</li>
+            <li><strong>Answer Relevance:</strong> Scores the semantic alignment of the generated response against the user's initial question, detecting and mitigating systemic topic drift.</li>
+            <li><strong>Context Precision:</strong> Assesses the quality of the vector search scoring, ensuring that retrieval pipelines prioritize highly relevant reference data chunks while filtering out background noise.</li>
+        </ol>
+        <p>
+            Implementing these continuous evaluation loops improved retrieval precision by <strong>35%</strong> and reduced manual search overhead by <strong>60%</strong> across active target user groups.
+        </p>
+    </div>
+
+</body>
+</html>
