@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Data Lakes & Large-Scale Portfolio Analytics - Shrikant Khaire</title>
+    <style>
+        /* Anthropic Editorial Identity & System Typography */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            background-color: #FBF9F6;
+            color: #191919;
+            margin: 40px auto;
+            max-width: 860px;
+            padding: 0 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
+            color: #191919;
+        }
+
+        h2 {
+            color: #E05A47; /* Anthropic Terracotta */
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            border-bottom: 1px solid #EAE5DF;
+            padding-bottom: 6px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #191919;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #383838;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        strong {
+            color: #191919;
+            font-weight: 600;
+        }
+
+        a {
+            color: #E05A47;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(224, 90, 71, 0.4);
+            transition: border-color 0.2s ease;
+        }
+
+        a:hover {
+            border-bottom-style: solid;
+            border-color: #E05A47;
+        }
+
+        .nav-back {
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+
+        /* Clean Technical Callout Boxes */
+        .callout-box {
+            background-color: #F5F2ED;
+            border-left: 3px solid #E05A47;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .callout-box h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #191919;
+            font-weight: 600;
+        }
+
+        /* Tables matching the master design language */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9rem;
+            background: #FBF9F6;
+        }
+
+        th {
+            background-color: #F5F2ED;
+            color: #191919;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #EAE5DF;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #EAE5DF;
+            color: #383838;
+            vertical-align: top;
+        }
+
+        tr:hover td {
+            background-color: #F5F2ED;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+            margin-top: 4px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-back">
+        <a href="index.html">&larr; Back to Home</a> &nbsp;|&nbsp; <a href="interests.html">Topics of Interest</a>
+    </div>
+
+    <h1>Distributed Data Lakes & Large-Scale Portfolio Analytics</h1>
+    <p style="font-size: 1.05rem; color: #2D2D2D; margin-bottom: 30px;">
+        Architectural specifications for petabyte-scale distributed data processing, compliance lineage mapping, and legacy compute infrastructure modernization.
+    </p>
+
+    <div class="section">
+        <h2>1. Petabyte-Scale Distributed Processing Platforms</h2>
+        <p>
+            Orchestrating loss forecasting and quantitative analytics across a massive <strong>$550B+ banking credit and loan portfolio</strong> requires specialized computational engines. Running classic relational database clusters against such massive transaction pools quickly leads to system degradation and failed processing intervals during peak operational cycles.
+        </p>
+
+        <p>
+            To address these limitations, the big data framework leverages distributed data lake topologies powered by <strong>Apache Spark and Hadoop</strong>. This architecture shifts data execution paths away from isolated physical hosts over to horizontally scaled, multi-tenant computing partitions. Implementing these optimized data processing topologies successfully <strong>shrank processing runtimes by 40%</strong>, accelerating standard batch computations from 2 hours down to 1 hour.
+        </p>
+
+        <div class="callout-box">
+            <h4>Distributed Data Pipeline Partitioning Strategy</h4>
+            <ol>
+                <li><strong>Dynamic Data Partitioning:</strong> Ingested ledger records are partitioned across optimal cluster storage layouts based on time-series hashes and geographic bounds to prevent data skewing.</li>
+                <li><strong>In-Memory Processing Layers:</strong> Apache Spark jobs keep intermediate extraction transformations entirely within RAM partitions, eliminating expensive disk read/write cycles between mapping runs.</li>
+                <li><strong>Optimized File System Formats:</strong> Data structures are saved using high-performance columnar formats, such as Apache Parquet and Apache Iceberg, significantly compressing file footprints and accelerating down-stream analytical scans.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Rigid Lineage Mapping for Auditing & Compliance</h2>
+        <p>
+            Operating data engines within critical banking frameworks requires more than raw processing speed. Regulatory stress testing evaluations—such as <strong>CCAR (Comprehensive Capital Analysis and Review) and DFAST (Dodd-Frank Act Stress Testing)</strong>—mandate absolute accountability across data transformations. Teams must prove the exact provenance of every single variable used in final risk calculation sheets.
+        </p>
+        <p>
+            The platform addresses these compliance boundaries by establishing an immutable <strong>Input-Output Data Lineage Protocol</strong> directly within the processing layer:
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data Trace Vector</th>
+                    <th>Legacy Tracking Limitations</th>
+                    <th>Immutable Auditing Optimizations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Provenance Tracking</strong></td>
+                    <td>Lineage details are manually logged inside offline metadata catalogs, which are prone to drifting out of sync during pipeline code updates.</td>
+                    <td><strong>Runtime Metadata Interception</strong> dynamically injects graph tracing tokens straight into active Spark DAGs, logging precise execution context.</td>
+                </tr>
+                <tr>
+                    <td><strong>Validation Integrity</strong></td>
+                    <td>Data format changes are typically evaluated after pipeline execution runs, causing downstream calculation errors when bad entries slip through.</td>
+                    <td><strong>Automated Schema-on-Read Gating</strong> drops malformed transaction records into isolation containment queues before jobs run.</td>
+                </tr>
+                <tr>
+                    <td><strong>QA Effort Reduction</strong></td>
+                    <td>Auditing groups spend massive timelines manually investigating data derivation paths across separate system teams.</td>
+                    <td><strong>Standardized Column-Level Lineage</strong> decreases compliance QA review workloads by up to 70%, completely eliminating baseline operational overtime requirements.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>3. Data Warehouse Consolidation & Lakehouse Topologies</h2>
+        <p>
+            Enterprise growth often creates massive database fragmentation, leaving critical transaction ledgers spread across isolated database platforms. Managing separate infrastructure footprints drives up vendor licensing overhead and increases processing friction for data analytics groups trying to query information across silos.
+        </p>
+
+        <p>
+            The system addressed this complexity by executing a massive migration that consolidated over <strong>110 distinct distributed credit databases into a single, centralized data platform</strong> (Netezza/Dremio). This unified warehouse framework saved <strong>$2M/year in operational overhead</strong> and served as a high-velocity data lakehouse for downstream analytics tools:
+        </p>
+
+        <div class="callout-box">
+            <h4>The Centralized Analytical Data Gateway Blueprint</h4>
+            <ul>
+                <li><strong>Decoupled Semantic Virtualization:</strong> Implements virtual abstraction query layers (via Dremio) sitting above raw object storage pools, letting business analysts query raw data directly without data copying overhead.</li>
+                <li><strong>Standardized Report Lineage:</strong> Integrates enterprise reporting tools (Power BI, Tableau) directly into semantic layer catalogs, ensuring all executive indicators reference unified data paths.</li>
+                <li><strong>Scalable E-Commerce Ingestion:</strong> Integrates virtual payment systems (TSYS integrations) handling more than 500K+ monthly transactions, cutting processing latency by 25%.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Legacy Mainframe Compute Modernization</h2>
+        <p>
+            Sustaining long-term platform resilience requires upgrading legacy transaction environments to modern open systems. Maintaining massive core ledgers on legacy mainframe hardware (zOS environment topologies) binds organizations to proprietary operating formats and expensive vendor scaling models.
+        </p>
+        
+        <h3>zOS Mainframe to Distributed Open Systems Migration</h3>
+        <p>
+            To achieve long-term agility and open up core financial ledgers to real-time distributed ML pipelines, the engineering group led a complete mainframe modernization strategy, migrating core processing lines out of <strong>zOS architectures onto distributed AIX open systems systems</strong>.
+        </p>
+        <ol>
+            <li><strong>Decoupling Proprietary Storage Formats:</strong> Legacy EBCDIC data files and hierarchical records were transformed into flat, compressed open data blocks natively supported by cloud environments.</li>
+            <li><strong>Asynchronous Thread Execution:</strong> Replaces rigid sequential job schedulers with concurrent multi-threaded task management, unlocking significant execution gains.</li>
+            <li><strong>40% Base Cost Elimination:</strong> Shifting compute routines over to standard open system execution layers eliminated specialized mainframe licensing demands, cutting core platform operating costs by 40%.</li>
+        </ol>
+    </div>
+
+</body>
+</html>
